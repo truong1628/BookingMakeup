@@ -37,7 +37,7 @@
     <div class="container text-center">
 
         <h1 class="display-4">
-            Đặt lịch Makeup Chuyên Nghiệp Ngay hoom nay
+            Đặt lịch Makeup Chuyên Nghiệp
         </h1>
 
         <p class="lead">
@@ -49,6 +49,52 @@
         <button class="btn btn-danger btn-lg">
             Đặt lịch ngay
         </button>
+
+    </div>
+
+</section>
+<section class="container py-5">
+
+    <h2 class="text-center mb-4">
+        Dịch vụ nổi bật
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-4"
+             th:each="service : ${services}">
+
+            <div class="card h-100 shadow">
+
+                <div class="card-body">
+
+                    <h5 class="card-title"
+                        th:text="${service.serviceName}">
+                    </h5>
+
+                    <p class="card-text"
+                       th:text="${service.description}">
+                    </p>
+
+                    <p>
+                        <strong>Giá:</strong>
+                        <span th:text="${service.price}">
+                        </span>
+                        VNĐ
+                    </p>
+
+                    <p>
+                        <strong>Thời gian:</strong>
+                        <span th:text="${service.duration}">
+                        </span>
+                        phút
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
