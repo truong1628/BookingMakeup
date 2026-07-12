@@ -19,4 +19,7 @@ public class ServiceService {
     public List<MakeupService> getAllServices() {
         return repository.findAll();
     }
+    public MakeupService getServiceById(Long id) {
+    return repository.findById(id).orElse(null);
+}
 }

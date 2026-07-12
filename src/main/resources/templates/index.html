@@ -53,11 +53,9 @@
     </div>
 
 </section>
-<section class="container py-5">
+<section class="container my-5">
 
-    <h2 class="text-center mb-4">
-        Dịch vụ nổi bật
-    </h2>
+    <h2 class="text-center mb-4">Dịch vụ nổi bật</h2>
 
     <div class="row">
 
@@ -66,29 +64,47 @@
 
             <div class="card h-100 shadow">
 
+                <img th:src="@{/images/{img}(img=${service.image})}"
+                    class="card-img-top"
+                    alt="Ảnh dịch vụ"
+                    style="height:250px; object-fit:cover;">
+
                 <div class="card-body">
 
                     <h5 class="card-title"
                         th:text="${service.serviceName}">
+                        Tên dịch vụ
                     </h5>
 
-                    <p class="card-text"
-                       th:text="${service.description}">
-                    </p>
-
-                    <p>
+                    <p class="card-text">
                         <strong>Giá:</strong>
+
                         <span th:text="${service.price}">
+                            0
                         </span>
+
                         VNĐ
                     </p>
 
-                    <p>
+                    <p class="card-text">
                         <strong>Thời gian:</strong>
+
                         <span th:text="${service.duration}">
+                            0
                         </span>
+
                         phút
                     </p>
+
+                    <p class="card-text"
+                       th:text="${service.description}">
+                        Mô tả
+                    </p>
+
+                    <a th:href="@{/service/{id}(id=${service.id})}"
+                        class="btn btn-primary">
+                        Xem chi tiết
+                    </a>
 
                 </div>
 
