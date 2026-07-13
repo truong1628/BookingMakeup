@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.booking.bookingmakeup.service.ServiceService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class HomeController {
 
@@ -16,11 +18,14 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
 
         model.addAttribute("services",
                 serviceService.getAllServices());
-
+                
+        model.addAttribute(
+            "loginUser",
+            session.getAttribute("loginUser"));
         return "index";
     }
    

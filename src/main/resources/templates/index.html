@@ -17,17 +17,34 @@
             💄 Booking Makeup
         </a>
 
-        <div>
+        <div th:if="${loginUser == null}">
 
-            <a class="btn btn-outline-light me-2">
+            <a th:href="@{/login}"
+            class="btn btn-outline-light me-2">
                 Đăng nhập
             </a>
 
-            <a class="btn btn-warning">
+            <a th:href="@{/register}"
+            class="btn btn-warning">
                 Đăng ký
             </a>
 
         </div>
+
+        <div th:if="${loginUser != null}">
+
+            <span class="text-white me-3">
+                Xin chào,
+                <b th:text="${loginUser.fullName}"></b>
+            </span>
+
+            <a th:href="@{/logout}"
+            class="btn btn-danger">
+                Đăng xuất
+            </a>
+
+        </div>
+        
 
     </div>
 </nav>
