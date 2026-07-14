@@ -52,6 +52,8 @@ public class AuthController {
         }
 
         userService.save(user);
+        
+        user.setRole("USER");
 
         redirectAttributes.addFlashAttribute(
                 "success",

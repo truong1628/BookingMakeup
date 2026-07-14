@@ -22,4 +22,10 @@ public class ServiceService {
     public MakeupService getServiceById(Long id) {
         return repository.findById(id).orElse(null);
     }
+    public MakeupService save(MakeupService service) {
+        return repository.save(service);
+    }
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

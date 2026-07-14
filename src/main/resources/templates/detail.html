@@ -36,9 +36,10 @@
 
             <p th:text="${service.description}"></p>
 
-            <button class="btn btn-danger btn-lg">
+            <a th:href="@{/booking/{id}(id=${service.id})}"
+                class="btn btn-danger btn-lg">
                 Đặt lịch ngay
-            </button>
+            </a>
 
         </div>
 

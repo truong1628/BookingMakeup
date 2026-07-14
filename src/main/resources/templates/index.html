@@ -34,11 +34,28 @@
         <div th:if="${loginUser != null}">
 
             <span class="text-white me-3">
-                Xin chào,
+                Xin chào
                 <b th:text="${loginUser.fullName}"></b>
             </span>
 
-            <a th:href="@{/logout}"
+            <a th:if="${loginUser.role == 'USER'}"
+            href="/MyBooking"
+            class="btn btn-success">
+                Lịch của tôi
+            </a>
+
+            <a th:if="${loginUser.role == 'ADMIN'}"
+            href="/admin"
+            class="btn btn-warning">
+                Quản lý Booking
+            </a>
+            <a th:if="${loginUser != null && loginUser.role == 'ADMIN'}"
+            th:href="@{/admin/services}"
+            class="btn btn-warning">
+                Quản lý dịch vụ
+            </a>
+
+            <a href="/logout"
             class="btn btn-danger">
                 Đăng xuất
             </a>
