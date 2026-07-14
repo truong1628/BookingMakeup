@@ -51,15 +51,17 @@ public class AuthController {
             return "redirect:/register";
         }
 
-        userService.save(user);
-        
+        // Gán role trước
         user.setRole("USER");
+
+        // Sau đó mới lưu
+        userService.save(user);
 
         redirectAttributes.addFlashAttribute(
                 "success",
                 "Đăng ký thành công!");
 
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @PostMapping("/login")

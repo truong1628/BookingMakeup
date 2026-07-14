@@ -17,11 +17,9 @@
 
     <h2>Quản lý dịch vụ</h2>
 
-    <a href="/admin/service/add"
-       class="btn btn-success mb-3">
-
+    <a th:href="@{/service/add}"
+    class="btn btn-success">
         Thêm dịch vụ
-
     </a>
 
     <table class="table table-bordered">
@@ -63,11 +61,20 @@
                     Sửa
                 </a>
 
-                <a th:href="@{/service/delete/{id}(id=${service.id})}"
-                class="btn btn-danger btn-sm"
-                onclick="return confirm('Bạn có chắc muốn xóa?')">
-                    Xóa
-                </a>
+                <form th:action="@{/service/{id}(id=${service.id})}"
+                    method="post"
+                    style="display:inline">
+
+                    <input type="hidden"
+                        name="_method"
+                        value="delete">
+
+                    <button class="btn btn-danger btn-sm"
+                            onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+                        Xóa
+                    </button>
+
+                </form>
 
             </td>
 

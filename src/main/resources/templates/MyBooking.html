@@ -23,7 +23,7 @@
 
     <tbody>
 
-    <<tr th:each="booking : ${bookings}">
+    <tr th:each="booking : ${bookings}">
 
     <td th:text="${booking.service.serviceName}"></td>
 
@@ -35,14 +35,18 @@
 
     <td>
 
-        <a th:if="${booking.status == 'Pending'}"
-           th:href="@{/booking/cancel/{id}(id=${booking.id})}"
-           class="btn btn-danger btn-sm"
-           onclick="return confirm('Bạn có chắc muốn hủy lịch?')">
+        <form th:action="@{/booking/{id}(id=${booking.id})}"
+            method="post">
 
-            Hủy
+            <input type="hidden"
+                name="_method"
+                value="delete">
 
-        </a>
+            <button class="btn btn-danger btn-sm">
+                Hủy lịch
+            </button>
+
+        </form>
 
     </td>
 

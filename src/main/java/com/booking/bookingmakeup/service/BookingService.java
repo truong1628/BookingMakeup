@@ -29,37 +29,72 @@ public class BookingService {
         return bookingRepository.findById(id).orElse(null);
     }
 
-    public void cancelBooking(Long id) {
+    // User hủy lịch
+    public void cancelBooking(Long id, User user) {
 
-        Booking booking = getBookingById(id);
+        Booking booking = bookingRepository.findById(id).orElse(null);
 
-        if (booking != null) {
-
-            booking.setStatus("Cancelled");
-
-            bookingRepository.save(booking);
-
+        if (booking == null) {
+            return;
         }
 
+        // Chỉ được hủy booking của chính mình
+        if (!booking.getUser().getId().equals(user.getId())) {
+            return;
+        }
+        if (!booking.getStatus().equals("Pending")) {
+            return;
+        }
+
+        booking.setStatus("Cancelled");
+
+        bookingRepository.save(booking);
     }
+
+    
 
     public List<Booking> getAllBookings() {
 
         return bookingRepository.findAll();
 
     }
+
+       // Admin xác nhận
     public void confirmBooking(Long id) {
 
-        Booking booking =
-                bookingRepository.findById(id).orElse(null);
+        Booking booking = getBookingById(id);
 
-        if (booking != null) {
-
-            booking.setStatus("Confirmed");
-
-            bookingRepository.save(booking);
-
+        if (booking == null) {
+            return;
         }
 
-}
+        // Chỉ Pending mới được Confirm
+        if (!booking.getStatus().equals("Pending")) {
+            return;
+        }
+
+        booking.setStatus("Confirmed");
+
+        bookingRepository.save(booking);
+    }
+
+ // Admin hủy
+    public void adminCancelBooking(Long id) {
+
+        Booking booking = getBookingById(id);
+
+        if (booking == null) {
+            return;
+        }
+
+        // Nếu đã hủy thì thôi
+        if (booking.getStatus().equals("Cancelled")) {
+            return;
+        }
+
+        booking.setStatus("Cancelled");
+
+        bookingRepository.save(booking);
+    }
+
 }

@@ -18,12 +18,13 @@
 
     <h2>Sửa dịch vụ</h2>
 
-    <form th:action="@{/service/update}"
-          th:object="${service}"
-          method="post">
+    <form th:action="@{/service/{id}(id=${service.id})}"
+      th:object="${service}"
+      method="post">
 
         <input type="hidden"
-               th:field="*{id}">
+            name="_method"
+            value="put">
 
         <div class="mb-3">
 

@@ -2,10 +2,12 @@ package com.booking.bookingmakeup.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.booking.bookingmakeup.entity.MakeupService;
@@ -21,15 +23,25 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
+    // ==========================
+    // Xem chi tiết dịch vụ
+    // GET /service/{id}
+    // ==========================
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
 
-        model.addAttribute("service",
+        model.addAttribute(
+                "service",
                 serviceService.getServiceById(id));
 
         return "detail";
     }
-    @GetMapping("/services")
+
+    // ==========================
+    // Danh sách dịch vụ
+    // GET /service/services
+    // ==========================
+    @GetMapping
     public String services(Model model) {
 
         model.addAttribute(
@@ -39,7 +51,11 @@ public class ServiceController {
         return "services";
     }
 
-    @GetMapping("/service/add")
+    // ==========================
+    // Form thêm dịch vụ
+    // GET /service/add
+    // ==========================
+    @GetMapping("/add")
     public String addServicePage(Model model) {
 
         model.addAttribute(
@@ -49,6 +65,23 @@ public class ServiceController {
         return "add-service";
     }
 
+    // ==========================
+    // Lưu dịch vụ mới
+    // POST /service
+    // ==========================
+    @PostMapping
+    public String saveService(
+            @ModelAttribute MakeupService service) {
+
+        serviceService.save(service);
+
+        return "redirect:/admin/services";
+    }
+
+    // ==========================
+    // Form sửa
+    // GET /service/edit/{id}
+    // ==========================
     @GetMapping("/edit/{id}")
     public String editService(
             @PathVariable Long id,
@@ -61,23 +94,33 @@ public class ServiceController {
         return "edit-service";
     }
 
-    @PostMapping("/update")
+    // ==========================
+    // Cập nhật
+    // PUT /service/{id}
+    // ==========================
+    @PutMapping("/{id}")
     public String updateService(
+            @PathVariable Long id,
             @ModelAttribute MakeupService service) {
 
-        System.out.println("ID = " + service.getId());
-        System.out.println("Tên = " + service.getServiceName());
+        service.setId(id);
 
         serviceService.save(service);
 
         return "redirect:/admin/services";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteService(@PathVariable Long id) {
+    // ==========================
+    // Xóa
+    // DELETE /service/{id}
+    // ==========================
+    @DeleteMapping("/{id}")
+    public String deleteService(
+            @PathVariable Long id) {
 
         serviceService.delete(id);
 
         return "redirect:/admin/services";
     }
+
 }

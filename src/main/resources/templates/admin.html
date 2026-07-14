@@ -27,61 +27,78 @@ Quản lý lịch đặt
 
 <tr>
 
-<th>ID</th>
+      <th>ID</th>
 
-<th>Khách hàng</th>
+      <th>Khách hàng</th>
 
-<th>Dịch vụ</th>
+      <th>Dịch vụ</th>
 
-<th>Ngày</th>
+      <th>Ngày</th>
 
-<th>Giờ</th>
+      <th>Giờ</th>
 
-<th>Trạng thái</th>
+      <th>Trạng thái</th>
 
-<th>Thao tác</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr th:each="booking : ${bookings}">
-
-<td th:text="${booking.id}"></td>
-
-<td th:text="${booking.user.fullName}"></td>
-
-<td th:text="${booking.service.serviceName}"></td>
-
-<td th:text="${booking.bookingDate}"></td>
-
-<td th:text="${booking.bookingTime}"></td>
-
-<td th:text="${booking.status}"></td>
-
-<td>
-
-<a th:href="@{/admin/confirm/{id}(id=${booking.id})}"
-class="btn btn-success btn-sm">
-
-Xác nhận
-
-</a>
-
-<a th:href="@{/admin/cancel/{id}(id=${booking.id})}"
-class="btn btn-danger btn-sm">
-
-Hủy
-
-</a>
-
-</td>
+      <th>Thao tác</th>
 
 </tr>
 
-</tbody>
+      </thead>
+
+            <tbody>
+
+                  <tr th:each="booking : ${bookings}">
+
+                  <td th:text="${booking.id}"></td>
+
+                  <td th:text="${booking.user.fullName}"></td>
+
+                  <td th:text="${booking.service.serviceName}"></td>
+
+                  <td th:text="${booking.bookingDate}"></td>
+
+                  <td th:text="${booking.bookingTime}"></td>
+
+                  <td th:text="${booking.status}"></td>
+
+                  <td>
+
+                        <form th:action="@{/admin/booking/{id}/confirm(id=${booking.id})}"
+                              method="post"
+                              style="display:inline;">
+
+                              <input type="hidden"
+                                    name="_method"
+                                    value="put">
+
+                              <button type="submit"
+                                    class="btn btn-success btn-sm">
+                                    Xác nhận
+                              </button>
+
+                        </form>
+
+                        <form th:action="@{/admin/booking/{id}/cancel(id=${booking.id})}"
+                              method="post"
+                              style="display:inline;">
+
+                              <input type="hidden"
+                                    name="_method"
+                                    value="put">
+
+                              <button type="submit"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc muốn hủy lịch?')">
+                                    Hủy
+                              </button>
+
+                        </form>
+
+                  </td>
+
+            </tr>
+
+      </tbody>
 
 </table>
 

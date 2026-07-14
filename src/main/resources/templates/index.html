@@ -39,7 +39,7 @@
             </span>
 
             <a th:if="${loginUser.role == 'USER'}"
-            href="/MyBooking"
+            th:href="@{/booking/my}"
             class="btn btn-success">
                 Lịch của tôi
             </a>

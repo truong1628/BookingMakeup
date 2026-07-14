@@ -3,11 +3,9 @@ package com.booking.bookingmakeup.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
-import com.booking.bookingmakeup.entity.MakeupService;
 import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.service.BookingService;
 import com.booking.bookingmakeup.service.ServiceService;
@@ -45,24 +43,45 @@ public class AdminController {
         return "admin";
     }
 
-    @GetMapping("/admin/confirm/{id}")
-    public String confirmBooking(
-            @PathVariable Long id) {
+    @PutMapping("/admin/booking/{id}/confirm")
+public String confirmBooking(
+        @PathVariable Long id,
+        HttpSession session) {
 
-        bookingService.confirmBooking(id);
+    User loginUser =
+            (User) session.getAttribute("loginUser");
 
-        return "redirect:/admin";
-
+    if (loginUser == null) {
+        return "redirect:/login";
     }
 
-    @GetMapping("/admin/cancel/{id}")
+    if (!loginUser.getRole().equals("ADMIN")) {
+        return "redirect:/";
+    }
+
+    bookingService.confirmBooking(id);
+
+    return "redirect:/admin";
+}
+
+    @PutMapping("/admin/booking/{id}/cancel")
     public String cancelBooking(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            HttpSession session) {
 
-        bookingService.cancelBooking(id);
+        User loginUser =
+                (User) session.getAttribute("loginUser");
 
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
+        if (!loginUser.getRole().equals("ADMIN")) {
+            return "redirect:/";
+        }
+
+        bookingService.adminCancelBooking(id);
         return "redirect:/admin";
-
     }
 
     @GetMapping("/admin/services")
@@ -87,23 +106,5 @@ public class AdminController {
 
         return "admin-services";
     }
-
-    @GetMapping("/admin/service/add")
-    public String addServicePage(Model model) {
-
-        model.addAttribute(
-                "service",
-                new MakeupService());
-
-        return "add-service";
-    }
-
-    @PostMapping("/admin/service/add")
-    public String saveService(
-            @ModelAttribute MakeupService service) {
-
-        serviceService.save(service);
-
-        return "redirect:/admin/services";
-    }
+   
 }
