@@ -61,6 +61,28 @@
                                name="serviceId"
                                th:value="${service.id}">
 
+                            <div class="mb-3">
+
+                            <label class="form-label">
+                                Chọn Makeup Artist
+                            </label>
+
+                            <select class="form-select"
+                                    name="artistId"
+                                    required>
+
+                                <option value="">
+                                    -- Chọn Makeup Artist --
+                                </option>
+
+                                <option th:each="artist : ${artists}"
+                                        th:value="${artist.id}"
+                                        th:text="${artist.fullName}">
+                                </option>
+
+                            </select>
+
+                        </div>
                         <div class="mb-3">
 
                             <label class="form-label">
@@ -68,9 +90,15 @@
                             </label>
 
                             <input type="date"
-                                   class="form-control"
-                                   th:field="*{bookingDate}"
-                                   required>
+                                class="form-control"
+                                th:field="*{bookingDate}"
+                                th:min="${today}"                                
+                                required>
+
+                            <div class="text-danger mt-1"
+                                th:if="${#fields.hasErrors('bookingDate')}"
+                                th:errors="*{bookingDate}">
+                            </div>
 
                         </div>
 
@@ -81,16 +109,23 @@
                             </label>
 
                             <input type="time"
-                                   class="form-control"
-                                   th:field="*{bookingTime}"
-                                   required>
+                                class="form-control"
+                                th:field="*{bookingTime}"
+                                step="1800"
+                                required>
+
+                            <div class="text-danger mt-1"
+                                th:if="${#fields.hasErrors('bookingTime')}"
+                                th:errors="*{bookingTime}">
+                            </div>
 
                         </div>
+                        
 
                         <button type="submit"
                                 class="btn btn-danger w-100">
 
-                            Xác nhận đặt lịch
+                            📅 Xác nhận đặt lịch
 
                         </button>
 

@@ -21,56 +21,75 @@
         <div class="card-body">
 
             <form th:action="@{/service}"
-            th:object="${service}"
-            method="post">
+                th:object="${service}"
+                method="post">
 
                 <div class="mb-3">
                     <label>Tên dịch vụ</label>
-                    <input
-                            type="text"
-                            th:field="*{serviceName}"
-                            class="form-control">
+                    <input type="text"
+                        th:field="*{serviceName}"
+                        class="form-control">
+
+                    <div class="text-danger"
+                        th:if="${#fields.hasErrors('serviceName')}"
+                        th:errors="*{serviceName}">
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label>Giá</label>
-                    <input
-                            type="number"
-                            th:field="*{price}"
-                            class="form-control">
+                    <input type="number"
+                        th:field="*{price}"
+                        class="form-control">
+
+                    <div class="text-danger"
+                        th:if="${#fields.hasErrors('price')}"
+                        th:errors="*{price}">
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label>Thời gian (phút)</label>
-                    <input
-                            type="number"
-                            th:field="*{duration}"
-                            class="form-control">
+                    <input type="number"
+                        th:field="*{duration}"
+                        class="form-control">
+
+                    <div class="text-danger"
+                        th:if="${#fields.hasErrors('duration')}"
+                        th:errors="*{duration}">
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label>Ảnh</label>
-                    <input
-                            type="text"
-                            th:field="*{image}"
-                            class="form-control">
+                    <input type="text"
+                        th:field="*{image}"
+                        class="form-control">
+
+                    <div class="text-danger"
+                        th:if="${#fields.hasErrors('image')}"
+                        th:errors="*{image}">
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label>Mô tả</label>
-
-                    <textarea
-                            th:field="*{description}"
+                    <textarea th:field="*{description}"
                             class="form-control"
                             rows="4"></textarea>
+
+                    <div class="text-danger"
+                        th:if="${#fields.hasErrors('description')}"
+                        th:errors="*{description}">
+                    </div>
                 </div>
 
                 <button class="btn btn-success">
                     Lưu dịch vụ
                 </button>
 
-                <a href="/admin/services"
-                   class="btn btn-secondary">
+                <a th:href="@{/admin/services}"
+                class="btn btn-secondary">
                     Quay lại
                 </a>
 

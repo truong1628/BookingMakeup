@@ -1,59 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <title>Lịch của tôi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
 </head>
+
 <body>
-    <table class="table table-bordered">
 
-    <thead>
+<div class="container mt-5">
 
-    <tr>
+    <h2 class="mb-4">Lịch của tôi</h2>
 
-        <th>Dịch vụ</th>
-        <th>Ngày</th>
-        <th>Giờ</th>
-        <th>Trạng thái</th>
-        <th>Thao tác</th>
-    </tr>
+    <table class="table table-bordered table-striped">
 
-    </thead>
+        <thead>
 
-    <tbody>
+        <tr>
 
-    <tr th:each="booking : ${bookings}">
+            <th>Dịch vụ</th>
+            <th>Makeup Artist</th>
+            <th>Ngày</th>
+            <th>Giờ</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
 
-    <td th:text="${booking.service.serviceName}"></td>
+        </tr>
 
-    <td th:text="${booking.bookingDate}"></td>
+        </thead>
 
-    <td th:text="${booking.bookingTime}"></td>
+        <tbody>
 
-    <td th:text="${booking.status}"></td>
+        <tr th:each="booking : ${bookings}">
 
-    <td>
+            <td th:text="${booking.service.serviceName}"></td>
 
-        <form th:action="@{/booking/{id}(id=${booking.id})}"
-            method="post">
+            <td th:text="${booking.artist.fullName}"></td>
 
-            <input type="hidden"
-                name="_method"
-                value="delete">
+            <td th:text="${booking.bookingDate}"></td>
 
-            <button class="btn btn-danger btn-sm">
-                Hủy lịch
-            </button>
+            <td th:text="${booking.bookingTime}"></td>
 
-        </form>
+            <td th:text="${booking.status}"></td>
 
-    </td>
+            <td>
 
-</tr>
+                <form
+                    th:if="${booking.status == 'Pending'}"
+                    th:action="@{/booking/{id}(id=${booking.id})}"
+                    method="post"
+                    style="display:inline">
 
-    </tbody>
+                    <input
+                        type="hidden"
+                        name="_method"
+                        value="delete">
 
-</table>
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Bạn có chắc muốn hủy lịch?')">
+
+                        Hủy lịch
+
+                    </button>
+
+                </form>
+
+                <span
+                    th:if="${booking.status != 'Pending'}"
+                    class="text-secondary">
+
+                    Không thể hủy
+
+                </span>
+
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
 </body>
+
 </html>

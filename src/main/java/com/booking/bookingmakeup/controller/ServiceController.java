@@ -2,6 +2,7 @@ package com.booking.bookingmakeup.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.booking.bookingmakeup.entity.MakeupService;
 import com.booking.bookingmakeup.service.ServiceService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/service")
@@ -68,10 +71,17 @@ public class ServiceController {
     // ==========================
     // Lưu dịch vụ mới
     // POST /service
+
+    
     // ==========================
     @PostMapping
     public String saveService(
-            @ModelAttribute MakeupService service) {
+            @Valid @ModelAttribute("service") MakeupService service,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "add-service";
+        }
 
         serviceService.save(service);
 
@@ -101,7 +111,12 @@ public class ServiceController {
     @PutMapping("/{id}")
     public String updateService(
             @PathVariable Long id,
-            @ModelAttribute MakeupService service) {
+            @Valid @ModelAttribute("service") MakeupService service,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "edit-service";
+        }
 
         service.setId(id);
 
@@ -109,7 +124,6 @@ public class ServiceController {
 
         return "redirect:/admin/services";
     }
-
     // ==========================
     // Xóa
     // DELETE /service/{id}

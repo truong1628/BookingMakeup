@@ -20,12 +20,10 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    // Kiểm tra email đã tồn tại chưa
     public boolean existsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    // Lưu user
     public User save(User user) {
         return userRepository.save(user);
     }

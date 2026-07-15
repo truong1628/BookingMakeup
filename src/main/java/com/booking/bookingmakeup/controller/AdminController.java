@@ -44,7 +44,7 @@ public class AdminController {
     }
 
     @PutMapping("/admin/booking/{id}/confirm")
-public String confirmBooking(
+    public String confirmBooking(
         @PathVariable Long id,
         HttpSession session) {
 

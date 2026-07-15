@@ -1,10 +1,13 @@
 package com.booking.bookingmakeup.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.booking.bookingmakeup.entity.Booking;
+import com.booking.bookingmakeup.entity.MakeupArtist;
 import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.repository.BookingRepository;
 
@@ -32,17 +35,15 @@ public class BookingService {
     // User hủy lịch
     public void cancelBooking(Long id, User user) {
 
-        Booking booking = bookingRepository.findById(id).orElse(null);
-
+        Booking booking = getBookingById(id);
         if (booking == null) {
             return;
         }
 
-        // Chỉ được hủy booking của chính mình
         if (!booking.getUser().getId().equals(user.getId())) {
             return;
         }
-        if (!booking.getStatus().equals("Pending")) {
+        if (!"Pending".equals(booking.getStatus())) {
             return;
         }
 
@@ -68,8 +69,7 @@ public class BookingService {
             return;
         }
 
-        // Chỉ Pending mới được Confirm
-        if (!booking.getStatus().equals("Pending")) {
+       if (!"Pending".equals(booking.getStatus())) {
             return;
         }
 
@@ -87,14 +87,24 @@ public class BookingService {
             return;
         }
 
-        // Nếu đã hủy thì thôi
-        if (booking.getStatus().equals("Cancelled")) {
+       if ("Cancelled".equals(booking.getStatus())) {
             return;
         }
 
         booking.setStatus("Cancelled");
 
         bookingRepository.save(booking);
+    }
+    public boolean existsBooking(
+            MakeupArtist artist,
+            LocalDate date,
+            LocalTime time){
+
+        return bookingRepository
+                .existsByArtistAndBookingDateAndBookingTime(
+                        artist,
+                        date,
+                        time);
     }
 
 }

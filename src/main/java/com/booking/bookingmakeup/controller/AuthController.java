@@ -51,7 +51,6 @@ public class AuthController {
             return "redirect:/register";
         }
 
-        // Gán role trước
         user.setRole("USER");
 
         // Sau đó mới lưu

@@ -28,17 +28,12 @@ Quản lý lịch đặt
 <tr>
 
       <th>ID</th>
-
       <th>Khách hàng</th>
-
       <th>Dịch vụ</th>
-
+      <th>Makeup Artist</th>
       <th>Ngày</th>
-
       <th>Giờ</th>
-
       <th>Trạng thái</th>
-
       <th>Thao tác</th>
 
 </tr>
@@ -55,6 +50,8 @@ Quản lý lịch đặt
 
                   <td th:text="${booking.service.serviceName}"></td>
 
+                  <td th:text="${booking.artist.fullName}"></td>
+
                   <td th:text="${booking.bookingDate}"></td>
 
                   <td th:text="${booking.bookingTime}"></td>
@@ -63,7 +60,9 @@ Quản lý lịch đặt
 
                   <td>
 
-                        <form th:action="@{/admin/booking/{id}/confirm(id=${booking.id})}"
+                        <!-- Xác nhận -->
+                        <form th:if="${booking.status == 'Pending'}"
+                              th:action="@{/admin/booking/{id}/confirm(id=${booking.id})}"
                               method="post"
                               style="display:inline;">
 
@@ -78,7 +77,9 @@ Quản lý lịch đặt
 
                         </form>
 
-                        <form th:action="@{/admin/booking/{id}/cancel(id=${booking.id})}"
+                        <!-- Hủy -->
+                        <form th:if="${booking.status == 'Pending'}"
+                              th:action="@{/admin/booking/{id}/cancel(id=${booking.id})}"
                               method="post"
                               style="display:inline;">
 
@@ -93,6 +94,16 @@ Quản lý lịch đặt
                               </button>
 
                         </form>
+
+                        <span th:if="${booking.status == 'Confirmed'}"
+                              class="badge bg-success">
+                              Đã xác nhận
+                        </span>
+
+                        <span th:if="${booking.status == 'Cancelled'}"
+                              class="badge bg-danger">
+                              Đã hủy
+                        </span>
 
                   </td>
 
