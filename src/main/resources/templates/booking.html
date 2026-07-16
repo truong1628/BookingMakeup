@@ -71,9 +71,7 @@
                                     name="artistId"
                                     required>
 
-                                <option value="">
-                                    -- Chọn Makeup Artist --
-                                </option>
+                                <option value="">-- Chọn Makeup Artist --</option>
 
                                 <option th:each="artist : ${artists}"
                                         th:value="${artist.id}"
@@ -89,7 +87,8 @@
                                 Ngày đặt
                             </label>
 
-                            <input type="date"
+                            <input id="bookingDate"
+                                type="date"
                                 class="form-control"
                                 th:field="*{bookingDate}"
                                 th:min="${today}"                                
@@ -108,11 +107,22 @@
                                 Giờ đặt
                             </label>
 
-                            <input type="time"
-                                class="form-control"
+                            <select
+                                class="form-select"
                                 th:field="*{bookingTime}"
-                                step="1800"
                                 required>
+
+                            <option value="">
+                                -- Chọn giờ --
+                            </option>
+
+                            <option
+                                th:each="time : ${timeSlots}"
+                                th:value="${time}"
+                                th:text="${time}">
+                            </option>
+
+                        </select>
 
                             <div class="text-danger mt-1"
                                 th:if="${#fields.hasErrors('bookingTime')}"
@@ -142,6 +152,60 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script>
 
+const artist=document.querySelector("[name='artistId']");
+const date=document.querySelector("[name='bookingDate']");
+const time=document.getElementById("bookingTime");
+
+function loadTimes(){
+
+    if(!artist.value || !date.value){
+        return;
+    }
+
+    fetch(`/booking/booked-times?artistId=${artist.value}&date=${date.value}`)
+    .then(res=>res.json())
+    .then(booked=>{
+
+        time.innerHTML="<option value=''>-- Chọn giờ --</option>";
+
+        for(let h=8;h<=20;h++){
+
+            for(let m of [0,30]){
+
+                let hh=String(h).padStart(2,'0');
+                let mm=String(m).padStart(2,'0');
+
+                let value=`${hh}:${mm}`;
+
+                let option=document.createElement("option");
+
+                option.value=value;
+
+                option.text=value;
+
+                if(booked.includes(value+":00")){
+
+                    option.disabled=true;
+
+                    option.text=value+" (Đã đặt)";
+                }
+
+                time.appendChild(option);
+
+            }
+
+        }
+ 
+    });
+
+}
+
+artist.addEventListener("change",loadTimes);
+
+date.addEventListener("change",loadTimes);
+
+</script>
 </body>
 </html>

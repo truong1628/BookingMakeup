@@ -28,5 +28,12 @@ public class MakeupArtistService {
         return repository.findById(id).orElse(null);
 
     }
+    public MakeupArtist save(MakeupArtist artist) {
+        return repository.save(artist);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 
 }

@@ -52,31 +52,6 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-    
-
-    public List<Booking> getAllBookings() {
-
-        return bookingRepository.findAll();
-
-    }
-
-       // Admin xác nhận
-    public void confirmBooking(Long id) {
-
-        Booking booking = getBookingById(id);
-
-        if (booking == null) {
-            return;
-        }
-
-       if (!"Pending".equals(booking.getStatus())) {
-            return;
-        }
-
-        booking.setStatus("Confirmed");
-
-        bookingRepository.save(booking);
-    }
 
  // Admin hủy
     public void adminCancelBooking(Long id) {
@@ -95,6 +70,7 @@ public class BookingService {
 
         bookingRepository.save(booking);
     }
+
     public boolean existsBooking(
             MakeupArtist artist,
             LocalDate date,
@@ -107,4 +83,69 @@ public class BookingService {
                         time);
     }
 
+    public List<LocalTime> getBookedTimes(
+            MakeupArtist artist,
+            LocalDate date) {
+
+        return bookingRepository.findBookedTimesByArtistAndDate(
+                artist,
+                date);
+    }
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
+    }
+
+
+    public void confirmBooking(Long id) {
+
+        Booking booking = getBookingById(id);
+
+        if (booking == null) {
+            return;
+        }
+
+        if (!"Pending".equals(booking.getStatus())) {
+            return;
+        }
+
+        booking.setStatus("Confirmed");
+
+        bookingRepository.save(booking);
+    }
+    public void completeBooking(Long id) {
+
+        Booking booking = getBookingById(id);
+
+        if (booking == null) {
+            return;
+        }
+
+        if (!"Confirmed".equals(booking.getStatus())) {
+            return;
+        }
+
+        booking.setStatus("Completed");
+
+        bookingRepository.save(booking);
+    }
+    
+    public long countAll() {
+         return bookingRepository.count();
+    }
+
+    public long countPending() {
+        return bookingRepository.countByStatus("Pending");
+    }
+
+    public long countConfirmed() {
+        return bookingRepository.countByStatus("Confirmed");
+    }
+
+    public long countCompleted() {
+        return bookingRepository.countByStatus("Completed");
+    }
+
+    public long countCancelled() {
+        return bookingRepository.countByStatus("Cancelled");
+    }
 }

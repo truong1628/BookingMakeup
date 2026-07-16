@@ -1,5 +1,6 @@
 package com.booking.bookingmakeup.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +16,7 @@ public class MakeupArtist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(100)")
     @NotBlank(message = "Tên Makeup Artist không được để trống")
     private String fullName;
 
@@ -23,6 +25,12 @@ public class MakeupArtist {
 
     @NotBlank(message = "Ảnh không được để trống")
     private String image;
+
+    @Column(name = "experience")
+    private String experience;
+
+    @Column(name = "description")
+    private String description;
 
     public MakeupArtist() {
     }
@@ -58,5 +66,20 @@ public class MakeupArtist {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    public String getExperience() {
+      return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
