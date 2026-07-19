@@ -1,4 +1,4 @@
-package com.booking.bookingmakeup.controller;
+package com.booking.bookingmakeup.controller.user;
 
 import java.util.List;
 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title th:text="${artist.id == null ? 'Thêm Makeup Artist' : 'Sửa Makeup Artist'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h2 th:text="${artist.id == null ? 'Thêm Makeup Artist' : 'Sửa Makeup Artist'}"></h2>
+        <form th:action="${artist.id == null} ? @{/admin/artists} : @{/admin/artists/{id}(id=${artist.id})}"
+            th:object="${artist}"
+            method="post">
+            <input th:if="${artist.id != null}" type="hidden" name="_method" value="put">
+            
+        <input th:if="${artist.id != null}"
+               type="hidden"
+               name="_method"
+               value="put">
+
+        <div class="mb-3">
+            <label>Họ tên</label>
+            <input type="text"
+                   class="form-control"
+                   th:field="*{fullName}">
+        </div>
+
+        <div class="mb-3">
+            <label>Số điện thoại</label>
+            <input type="text"
+                   class="form-control"
+                   th:field="*{phone}">
+        </div>
+
+        <div class="mb-3">
+            <label>Kinh nghiệm</label>
+            <input type="number"
+                   class="form-control"
+                   th:field="*{experience}">
+        </div>
+
+        <div class="mb-3">
+            <label>Mô tả</label>
+            <textarea class="form-control"
+                      rows="4"
+                      th:field="*{description}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Tên ảnh</label>
+            <input type="text"
+                   class="form-control"
+                   th:field="*{image}">
+        </div>
+
+        <button class="btn btn-success"
+                th:text="${artist.id == null ? 'Thêm' : 'Cập nhật'}">
+        </button>
+
+        <a href="/admin/artists"
+           class="btn btn-secondary">
+            Quay lại
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

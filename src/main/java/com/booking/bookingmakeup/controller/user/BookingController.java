@@ -1,4 +1,4 @@
-package com.booking.bookingmakeup.controller;
+package com.booking.bookingmakeup.controller.user;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -54,7 +54,7 @@ public String bookingPage(
         model.addAttribute("artists", artistService.getAll());
         model.addAttribute("today", LocalDate.now()); 
         model.addAttribute("timeSlots", generateTimeSlots());
-        return "booking";
+        return "user/booking";
 }
 
     // Lưu lịch đặt
@@ -78,7 +78,7 @@ public String bookingPage(
                 model.addAttribute("service", service);
                 model.addAttribute("artists", artistService.getAll());
                 model.addAttribute("today", LocalDate.now());
-                return "booking";
+                return "/user/booking";
         }
 
         // kiểm tra trùng lịch
@@ -90,7 +90,7 @@ public String bookingPage(
                 model.addAttribute("service", service);
                 model.addAttribute("artists", artistService.getAll());
                 model.addAttribute("today", LocalDate.now());
-                return "booking";
+                return "user/booking";
         }
         booking.setUser(loginUser);
         booking.setService(service);
@@ -108,7 +108,7 @@ public String bookingPage(
             return "redirect:/login";
         }
         model.addAttribute("bookings",bookingService.getBookingsByUser(loginUser));
-        return "MyBooking";
+        return "user/my-booking";
     }
 
     // Hủy lịch

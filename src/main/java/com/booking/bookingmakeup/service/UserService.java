@@ -33,4 +33,16 @@ public class UserService {
                 .findByEmailAndPassword(email, password)
                 .orElse(null);
     }
+
+    public User getById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public long countAll() {
+        return userRepository.count();
+    }
 }

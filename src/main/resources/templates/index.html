@@ -49,11 +49,7 @@
             class="btn btn-warning">
                 Quản lý Booking
             </a>
-            <a th:if="${loginUser != null && loginUser.role == 'ADMIN'}"
-            th:href="@{/admin/services}"
-            class="btn btn-warning">
-                Quản lý dịch vụ
-            </a>
+            
 
             <a href="/logout"
             class="btn btn-danger">

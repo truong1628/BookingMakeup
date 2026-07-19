@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 
-<title>Quản lý Makeup Artist</title>
+<title> Makeup Artist</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet">
@@ -16,10 +16,14 @@
 
 <div class="container mt-5">
 
-<h2>Quản lý Makeup Artist</h2>
+<h2> Makeup Artist</h2>
 
 <a href="/admin" class="btn btn-secondary mb-3">
     ← Quay lại
+</a>
+
+<a th:href="@{/admin/artists/add}" class="btn btn-success mb-3">
+    + Thêm Makeup Artist
 </a>
 
 <table class="table table-bordered table-striped">
@@ -34,6 +38,7 @@
 <th>SĐT</th>
 <th>Kinh nghiệm</th>
 <th>Mô tả</th>
+<th>Thao tác</th>
 
 </tr>
 
@@ -59,6 +64,31 @@
 <td th:text="${artist.experience}"></td>
 
 <td th:text="${artist.description}"></td>
+
+<td>
+
+    <a th:href="@{/admin/artists/{id}/edit(id=${artist.id})}"
+    class="btn btn-warning btn-sm">
+        Sửa
+    </a>
+
+    <form th:action="@{/admin/artists/{id}(id=${artist.id})}"
+        method="post"
+        style="display:inline;">
+
+        <input type="hidden"
+            name="_method"
+            value="delete">
+
+        <button type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Bạn có chắc muốn xóa?')">
+            Xóa
+        </button>
+
+</form>
+
+</td>
 
 </tr>
 
