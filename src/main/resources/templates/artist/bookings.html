@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch làm việc của tôi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Lịch làm việc của Artist: <span class="text-primary" th:text="${artist.fullName}"></span></h2>
+
+    <!-- BẢNG ĐÃ SỬA CỘT SĐT THÀNH EMAIL -->
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Khách hàng</th>
+            <th>Email</th> 
+            <th>Dịch vụ</th>
+            <th>Địa điểm</th>
+            <th>Ngày</th>
+            <th>Giờ</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.id}"></td>
+            <td th:text="${booking.user != null ? booking.user.fullName : 'N/A'}"></td>
+            
+            <!-- 👈 Sửa getter phone thành email để khớp với Entity User -->
+            <td th:text="${booking.user != null ? booking.user.email : 'N/A'}"></td>
+
+            <td th:text="${booking.service != null ? booking.service.serviceName : 'N/A'}"></td>
+            <td>
+                <span th:if="${booking.locationType == 'STUDIO'}" class="badge bg-info">Tại Studio</span>
+                <span th:if="${booking.locationType == 'HOME'}" class="badge bg-warning text-dark" th:text="'Tại nhà: ' + ${booking.address}"></span>
+            </td>
+            <td th:text="${booking.bookingDate}"></td>
+            <td th:text="${booking.bookingTime}"></td>
+            <!-- Trong cột Trạng thái -->
+            <td>
+                <span th:if="${booking.status == 'CONFIRMED'}" class="badge bg-primary">Đã xác nhận</span>
+                <span th:if="${booking.status == 'IN_PROGRESS'}" class="badge bg-warning text-dark">Đang thực hiện</span>
+                <span th:if="${booking.status == 'CANCEL_REQUESTED'}" class="badge bg-danger">Chờ duyệt hủy</span>
+                <span th:if="${booking.status == 'COMPLETED'}" class="badge bg-success">Đã hoàn thành</span>
+                <span th:if="${booking.status == 'CANCELLED'}" class="badge bg-secondary">Đã hủy</span>
+            </td>
+
+            <!-- Trong cột Thao tác -->
+            <td>
+                <!-- Nút Bắt đầu / Hoàn thành giữ nguyên -->
+                <form th:if="${booking.status == 'CONFIRMED'}" th:action="@{/artist/bookings/{id}/start(id=${booking.id})}" method="post" style="display:inline">
+                    <input type="hidden" name="_method" value="put">
+                    <button type="submit" class="btn btn-primary btn-sm">▶ Bắt đầu</button>
+                </form>
+
+                <!-- Nút Mở Modal Yêu Cầu Hủy (Chỉ hiện khi đơn chưa hoàn thành / chưa hủy) -->
+                <button th:if="${booking.status == 'CONFIRMED' || booking.status == 'IN_PROGRESS'}" 
+                        type="button" 
+                        class="btn btn-outline-danger btn-sm"
+                        data-bs-toggle="modal" 
+                        th:data-bs-target="'#cancelModal-' + ${booking.id}">
+                    ✖ Yêu cầu hủy
+                </button>
+                
+                <small th:if="${booking.status == 'CANCEL_REQUESTED'}" class="text-muted d-block">Đã gửi yêu cầu</small>
+
+                <!-- Modal Nhập Lý Do Hủy (Mỗi dòng 1 Modal theo Booking ID) -->
+                <div class="modal fade" th:id="'cancelModal-' + ${booking.id}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form th:action="@{/artist/bookings/{id}/request-cancel(id=${booking.id})}" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Yêu cầu hủy lịch #${booking.id}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3 text-start">
+                                        <label class="form-label font-weight-bold">Lý do hủy lịch:</label>
+                                        <textarea name="reason" class="form-control" rows="3" placeholder="Nhập lý do chi tiết (ví dụ: Trùng lịch đột xuất, bị ốm...)" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-danger">Gửi yêu cầu Admin duyệt</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(bookings)}">
+            <td colspan="9" class="text-center text-muted">Hiện tại bạn chưa được phân công lịch làm việc nào.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -63,22 +63,51 @@
 
                             <div class="mb-3">
 
+                        </div>
+                        <div class="mb-3">
+
+                            <label class="form-label">Địa điểm Makeup</label>
+
+                            <div class="form-check">
+
+                                <input class="form-check-input"
+                                    type="radio"
+                                    th:field="*{locationType}"
+                                    value="STUDIO"
+                                    id="studio">
+
+                                <label class="form-check-label" for="studio">
+                                    Đến Studio
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input class="form-check-input"
+                                    type="radio"
+                                    th:field="*{locationType}"
+                                    value="HOME"
+                                    id="home">
+
+                                <label class="form-check-label" for="home">
+                                    Makeup tại nhà
+                                </label>
+
+                            </div>
+
+                        </div>
+                        <div class="mb-3" id="addressBox" style="display:none;">
+
                             <label class="form-label">
-                                Chọn Makeup Artist
+                                Địa chỉ Makeup
                             </label>
 
-                            <select class="form-select"
-                                    name="artistId"
-                                    required>
-
-                                <option value="">-- Chọn Makeup Artist --</option>
-
-                                <option th:each="artist : ${artists}"
-                                        th:value="${artist.id}"
-                                        th:text="${artist.fullName}">
-                                </option>
-
-                            </select>
+                            <textarea
+                                    class="form-control"
+                                    rows="3"
+                                    th:field="*{address}">
+                            </textarea>
 
                         </div>
                         <div class="mb-3">
@@ -154,58 +183,24 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 
-const artist=document.querySelector("[name='artistId']");
-const date=document.querySelector("[name='bookingDate']");
-const time=document.getElementById("bookingTime");
+const studioRadio = document.getElementById("studio");
+const homeRadio = document.getElementById("home");
+const addressBox = document.getElementById("addressBox");
 
-function loadTimes(){
+function toggleAddress() {
 
-    if(!artist.value || !date.value){
-        return;
+    if (homeRadio.checked) {
+        addressBox.style.display = "block";
+    } else {
+        addressBox.style.display = "none";
     }
-
-    fetch(`/booking/booked-times?artistId=${artist.value}&date=${date.value}`)
-    .then(res=>res.json())
-    .then(booked=>{
-
-        time.innerHTML="<option value=''>-- Chọn giờ --</option>";
-
-        for(let h=8;h<=20;h++){
-
-            for(let m of [0,30]){
-
-                let hh=String(h).padStart(2,'0');
-                let mm=String(m).padStart(2,'0');
-
-                let value=`${hh}:${mm}`;
-
-                let option=document.createElement("option");
-
-                option.value=value;
-
-                option.text=value;
-
-                if(booked.includes(value+":00")){
-
-                    option.disabled=true;
-
-                    option.text=value+" (Đã đặt)";
-                }
-
-                time.appendChild(option);
-
-            }
-
-        }
- 
-    });
 
 }
 
-artist.addEventListener("change",loadTimes);
+studioRadio.addEventListener("change", toggleAddress);
+homeRadio.addEventListener("change", toggleAddress);
 
-date.addEventListener("change",loadTimes);
-
+toggleAddress();
 </script>
 </body>
 </html>

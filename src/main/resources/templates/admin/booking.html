@@ -1,142 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
-<meta charset="UTF-8">
-
-<title>Quản lý Booking</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <title>Quản lý Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
 
 <div class="container mt-5">
+    <h2 class="mb-4">Quản lý booking</h2>
 
-<h2 class="mb-4">
-Quản lý booking
-</h2>
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Khách hàng</th>
+                <th>Dịch vụ</th>
+                <th>Makeup Artist</th>
+                <th>Ngày</th>
+                <th>Giờ</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="booking : ${bookings}">
+                <td th:text="${booking.id}"></td>
+                <td th:text="${booking.user != null ? booking.user.fullName : 'Ẩn danh'}"></td>
+                <td th:text="${booking.service != null ? booking.service.serviceName : 'Dịch vụ mặc định'}"></td>
+                
+                <!-- SỬA LỖI TRỐNG CỘT: Kiểm tra nếu chưa có artist thì hiện badge cảnh báo -->
+                <td>
+                    <span th:if="${booking.artist != null}" th:text="${booking.artist.fullName}"></span>
+                    <span th:if="${booking.artist == null}" class="badge bg-warning text-dark">Chưa phân công</span>
+                </td>
 
-<table class="table table-bordered">
+                <td th:text="${booking.bookingDate}"></td>
+                <td th:text="${booking.bookingTime}"></td>
 
-<thead>
+                <td>
+                    <span class="badge bg-warning text-dark" th:if="${booking.status=='Pending'}">Pending</span>
+                    <span class="badge bg-success" th:if="${booking.status=='Confirmed'}">Confirmed</span>
+                    <span class="badge bg-primary" th:if="${booking.status=='Completed'}">Completed</span>
+                    <span class="badge bg-danger" th:if="${booking.status=='Cancelled'}">Cancelled</span>
+                </td>
 
-<tr>
+                <td>
+                    <!-- ĐỒNG BỘ URL: Sửa /admin/booking thành /admin/bookings để khớp với Controller -->
+                    
+                    <!-- Nút Xác nhận -->
+                    <form th:if="${booking.status=='Pending'}"
+                          th:action="@{/admin/bookings/{id}/confirm(id=${booking.id})}"
+                          method="post" style="display:inline">
+                        <input type="hidden" name="_method" value="put">
+                        <button class="btn btn-success btn-sm">Xác nhận</button>
+                    </form>
 
-<th>Khách hàng</th>
-<th>Dịch vụ</th>
-<th>Makeup Artist</th>
-<th>Ngày</th>
-<th>Giờ</th>
-<th>Trạng thái</th>
-<th>Thao tác</th>
+                    <!-- NÚT PHÂN CÔNG CHUYỂN TRANG: Chỉ hiển thị khi đơn chưa hoàn thành/bị hủy -->
+                    <a th:if="${booking.status != 'Completed' and booking.status != 'Cancelled'}"
+                       th:href="@{/admin/bookings/{id}/assign(id=${booking.id})}" 
+                       class="btn btn-info btn-sm text-white">
+                        Phân công
+                    </a>
 
-</tr>
+                    <!-- Nút Hoàn thành -->
+                    <form th:if="${booking.status=='Confirmed'}"
+                          th:action="@{/admin/bookings/{id}/complete(id=${booking.id})}"
+                          method="post" style="display:inline">
+                        <input type="hidden" name="_method" value="put">
+                        <button class="btn btn-primary btn-sm">Hoàn thành</button>
+                    </form>
 
-</thead>
-
-<tbody>
-
-<tr th:each="booking : ${bookings}">
-
-<td th:text="${booking.user.fullName}"></td>
-
-<td th:text="${booking.service.serviceName}"></td>
-
-<td th:text="${booking.artist.fullName}"></td>
-
-<td th:text="${booking.bookingDate}"></td>
-
-<td th:text="${booking.bookingTime}"></td>
-
-<td>
-
-<span class="badge bg-warning"
-th:if="${booking.status=='Pending'}">
-
-Pending
-
-</span>
-
-<span class="badge bg-success"
-th:if="${booking.status=='Confirmed'}">
-
-Confirmed
-
-</span>
-
-<span class="badge bg-primary"
-th:if="${booking.status=='Completed'}">
-
-Completed
-
-</span>
-
-<span class="badge bg-danger"
-th:if="${booking.status=='Cancelled'}">
-
-Cancelled
-
-</span>
-
-</td>
-
-<td>
-
-<form
-th:if="${booking.status=='Pending'}"
-th:action="@{/admin/booking/{id}/confirm(id=${booking.id})}"
-method="post"
-style="display:inline">
-
-<input type="hidden" name="_method" value="put">
-<button class="btn btn-success btn-sm">
-
-Xác nhận
-
-</button>
-
-</form>
-
-<form
-th:if="${booking.status=='Confirmed'}"
-th:action="@{/booking/admin/{id}/complete(id=${booking.id})}"
-method="post"
-style="display:inline">
-
-<button class="btn btn-primary btn-sm">
-
-Hoàn thành
-
-</button>
-
-</form>
-
-<form
-th:if="${booking.status!='Completed'}"
-th:action="@{/admin/booking/{id}/cancel(id=${booking.id})}"
-method="post"
-style="display:inline">
-
-<input type="hidden" name="_method" value="put">
-<button class="btn btn-danger btn-sm">
-
-Hủy
-
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
+                    <!-- Nút Hủy -->
+                    <form th:if="${booking.status!='Completed' and booking.status!='Cancelled'}"
+                          th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}"
+                          method="post" style="display:inline">
+                        <input type="hidden" name="_method" value="put">
+                        <button class="btn btn-danger btn-sm">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>

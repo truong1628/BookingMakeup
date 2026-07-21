@@ -52,7 +52,7 @@
             <td>
 
                 <form
-                    th:if="${booking.status == 'Pending'}"
+                    th:if="${booking.status == 'PENDING'}"
                     th:action="@{/booking/{id}(id=${booking.id})}"
                     method="post"
                     style="display:inline">
@@ -73,10 +73,10 @@
                 </form>
 
                 <span
-                    th:if="${booking.status != 'Pending'}"
+                    th:if="${booking.status != 'PENDING'}"
                     class="text-secondary">
 
-                    Đã Hủy
+                    Đã tiếp nhận 
 
                 </span>
 

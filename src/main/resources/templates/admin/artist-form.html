@@ -21,30 +21,61 @@
             method="post">
             <input th:if="${artist.id != null}" type="hidden" name="_method" value="put">
             
-        <input th:if="${artist.id != null}"
-               type="hidden"
-               name="_method"
-               value="put">
+        
 
         <div class="mb-3">
             <label>Họ tên</label>
+
             <input type="text"
-                   class="form-control"
-                   th:field="*{fullName}">
+                class="form-control"
+                th:field="*{fullName}">
+
+            <div class="text-danger"
+                th:errors="*{fullName}">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+
+            <input type="email"
+                class="form-control"
+                th:field="*{email}">
+
+            <div class="text-danger"
+                th:errors="*{email}">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Mật khẩu</label>
+
+            <input type="password"
+                class="form-control"
+                th:field="*{password}">
+
+            <div class="text-danger"
+                th:errors="*{password}">
+            </div>
         </div>
 
         <div class="mb-3">
             <label>Số điện thoại</label>
+
             <input type="text"
-                   class="form-control"
-                   th:field="*{phone}">
+                class="form-control"
+                th:field="*{phone}">
+
+            <div class="text-danger"
+                th:errors="*{phone}">
+            </div>
         </div>
 
         <div class="mb-3">
             <label>Kinh nghiệm</label>
-            <input type="number"
-                   class="form-control"
-                   th:field="*{experience}">
+            <input type="text"
+                class="form-control"
+                th:field="*{experience}">
         </div>
 
         <div class="mb-3">
@@ -59,6 +90,20 @@
             <input type="text"
                    class="form-control"
                    th:field="*{image}">
+            <div class="text-danger"
+                th:errors="*{image}">
+            </div>
+        </div>
+        <div class="form-check mb-3">
+
+            <input class="form-check-input"
+                type="checkbox"
+                th:field="*{active}">
+
+            <label class="form-check-label">
+                Đang hoạt động
+            </label>
+
         </div>
 
         <button class="btn btn-success"

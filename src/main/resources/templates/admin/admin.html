@@ -9,19 +9,14 @@
 
 <div class="container mt-5">
     <h2 class="mb-4 fw-bold">Quản lý booking</h2>
-      <div class="mb-3">
-      <a href="/admin/services" class="btn btn-primary">
-            Dịch vụ
-      </a>
+    
+    <div class="mb-3">
+        <a href="/admin/services" class="btn btn-primary">Dịch vụ</a>
+        <a href="/admin/artists" class="btn btn-success">Makeup Artist</a>
+        <a th:href="@{/}" class="btn btn-secondary ms-2">Quay lại</a>
+    </div>
 
-      <a href="/admin/artists" class="btn btn-success">
-            Makeup Artist
-      </a>
-       <a th:href="@{/}"
-         class="btn btn-secondary ms-2">
-        Quay lại
-      </a>
-      </div>
+    <!-- 5 Thẻ thống kê số lượng -->
     <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-5 mb-4">
         <div class="col">
             <div class="card text-bg-primary h-100 border-0 shadow-sm">
@@ -84,53 +79,85 @@
                 <tbody>
                     <tr th:each="booking : ${bookings}">
                         <td class="ps-3 fw-semibold" th:text="${booking.id}"></td>
-                        <td th:text="${booking.user.fullName}"></td>
-                        <td th:text="${booking.service.serviceName}"></td>
-                        <td th:text="${booking.artist.fullName}"></td>
+                        <td th:text="${booking.user != null ? booking.user.fullName : 'N/A'}"></td>
+                        <td th:text="${booking.service != null ? booking.service.serviceName : 'N/A'}"></td>
+                        <td>
+                            <span th:if="${booking.artist != null}" th:text="${booking.artist.fullName}"></span>
+                            <span th:if="${booking.artist == null}" class="badge bg-warning text-dark">Chưa phân công</span>
+                        </td>
                         <td th:text="${booking.bookingDate}"></td>
                         <td th:text="${booking.bookingTime}"></td>
                         
-                        <!-- Cột Trạng thái dạng Badge trực quan -->
+                        <!-- Cột Trạng thái -->
                         <td class="text-center">
-                            <span th:if="${booking.status == 'Pending'}" class="badge rounded-pill text-bg-warning px-3 py-2">Chờ xác nhận</span>
-                            <span th:if="${booking.status == 'Confirmed'}" class="badge rounded-pill text-bg-success px-3 py-2">Đã xác nhận</span>
-                            <span th:if="${booking.status == 'Completed'}" class="badge rounded-pill text-bg-primary px-3 py-2">Đã hoàn thành</span>
-                            <span th:if="${booking.status == 'Cancelled'}" class="badge rounded-pill text-bg-danger px-3 py-2">Đã hủy</span>
+                            <span th:if="${booking.status == 'PENDING'}" class="badge rounded-pill text-bg-warning px-3 py-2">Chờ xác nhận</span>
+                            <span th:if="${booking.status == 'CONFIRMED'}" class="badge rounded-pill text-bg-success px-3 py-2">Đã xác nhận</span>
+                            <span th:if="${booking.status == 'CANCEL_REQUESTED'}" class="badge rounded-pill text-bg-danger px-3 py-2">Yêu cầu hủy</span>
+                            <span th:if="${booking.status == 'COMPLETED'}" class="badge rounded-pill text-bg-primary px-3 py-2">Đã hoàn thành</span>
+                            <span th:if="${booking.status == 'CANCELLED'}" class="badge rounded-pill text-bg-secondary px-3 py-2">Đã hủy</span>
                         </td>
                         
                         <!-- Cột Thao tác -->
                         <td class="text-end pe-3">
-                            <!-- Hành động khi ở trạng thái Chờ xác nhận (Pending) -->
-                            <div th:if="${booking.status == 'Pending'}" class="btn-group" role="group">
-                                <form th:action="@{/admin/{id}/confirm(id=${booking.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-success btn-sm me-1">Xác nhận</button>
-                                </form>
-                                <form th:action="@{/admin/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                            onclick="return confirm('Bạn có chắc chắn muốn hủy lịch đặt này không?')">Hủy</button>
-                                </form>
-                            </div>
 
-                            <!-- Hành động khi ở trạng thái Đã xác nhận (Confirmed) -->
-                            <div th:if="${booking.status == 'Confirmed'}" class="btn-group" role="group">
-                                <form th:action="@{/admin/{id}/complete(id=${booking.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-primary btn-sm me-1">Hoàn thành</button>
-                                </form>
-                                <form th:action="@{/admin/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
-                                    <!-- Giữ nguyên method PUT ẩn nếu Backend của bạn yêu cầu PUT cho hủy lịch -->
+                            <!-- PENDING -->
+                            <div th:if="${booking.status == 'PENDING'}" class="btn-group">
+                                <a th:href="@{/admin/bookings/{id}/assign(id=${booking.id})}" class="btn btn-primary btn-sm">
+                                    <span th:if="${booking.artist == null}">Phân công</span>
+                                    <span th:if="${booking.artist != null}">Đổi Artist</span>
+                                </a>
+
+                                <form th:if="${booking.artist != null}" th:action="@{/admin/bookings/{id}/confirm(id=${booking.id})}" method="post">
                                     <input type="hidden" name="_method" value="put">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm"
-                                            onclick="return confirm('Bạn có chắc muốn hủy lịch?')">Hủy</button>
+                                    <button class="btn btn-success btn-sm">Xác nhận</button>
+                                </form>
+
+                                <form th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_method" value="put">
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn hủy?')">Hủy</button>
                                 </form>
                             </div>
 
-                            <!-- Không hiển thị nút bấm khi đã hoàn thành hoặc đã hủy -->
-                            <span th:if="${booking.status == 'Completed' or booking.status == 'Cancelled'}" class="text-muted fs-7">
-                                Không có thao tác
-                            </span>
+                            <!-- CONFIRMED -->
+                            <div th:if="${booking.status == 'CONFIRMED'}" class="btn-group">
+                                <form th:action="@{/admin/bookings/{id}/complete(id=${booking.id})}" method="post">
+                                    <input type="hidden" name="_method" value="put">
+                                    <button class="btn btn-primary btn-sm">Hoàn thành</button>
+                                </form>
+
+                                <form th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}" method="post">
+                                    <input type="hidden" name="_method" value="put">
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn hủy?')">Hủy</button>
+                                </form>
+                            </div>
+
+                            <!-- CANCEL_REQUESTED (ĐÃ TÁCH RA NGOÀI ĐỘC LẬP) -->
+                            <div th:if="${booking.status == 'CANCEL_REQUESTED'}" class="text-end">
+                                <span class="badge bg-warning text-dark d-inline-block mb-1">Artist xin hủy</span>
+                                <small class="text-danger d-block mb-2" th:text="'Lý do: ' + ${booking.cancelReason}"></small>
+                                
+                                <div class="btn-group">
+                                    <!-- Nút Chấp nhận Hủy -->
+                                    <form th:action="@{/admin/bookings/{id}/approve-cancel(id=${booking.id})}" method="post" style="display:inline">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xác nhận đồng ý hủy đơn này?')">Duyệt Hủy</button>
+                                    </form>
+
+                                    <!-- Nút Từ chối Hủy -->
+                                    <form th:action="@{/admin/bookings/{id}/reject-cancel(id=${booking.id})}" method="post" style="display:inline">
+                                        <button type="submit" class="btn btn-secondary btn-sm ms-1">Từ chối</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- COMPLETED -->
+                            <span th:if="${booking.status == 'COMPLETED'}" class="text-success fw-bold">Đã hoàn thành</span>
+
+                            <!-- CANCELLED -->
+                            <span th:if="${booking.status == 'CANCELLED'}" class="text-muted fw-bold">Đã hủy</span>
+
                         </td>
                     </tr>
-                    <!-- Hiển thị dòng này nếu danh sách rỗng -->
+                    
                     <tr th:if="${#lists.isEmpty(bookings)}">
                         <td colspan="8" class="text-center py-4 text-muted">Không có lịch đặt nào được tìm thấy.</td>
                     </tr>

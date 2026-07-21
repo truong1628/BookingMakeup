@@ -3,6 +3,7 @@ package com.booking.bookingmakeup.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,9 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(length = 20)
+    private String locationType;
 
     @NotNull(message = "Vui lòng chọn ngày")
     @FutureOrPresent(message = "Ngày phải từ hôm nay trở đi")
@@ -26,8 +30,6 @@ public class Booking {
 
     @NotNull(message = "Vui lòng chọn giờ")
     private LocalTime bookingTime;
-  
-
     private String status;
 
     @ManyToOne
@@ -38,13 +40,17 @@ public class Booking {
     @JoinColumn(name = "service_id")
     private MakeupService service;
 
-    @NotNull(message = "Vui lòng chọn Makeup Artist")
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private MakeupArtist artist;
 
+    private String cancelReason;
+
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String address;
     public Booking() {
     }
+    
 
     public Long getId() {
         return id;
@@ -96,4 +102,21 @@ public class Booking {
     public void setArtist(MakeupArtist artist) {
         this.artist = artist;
     }
+
+    public String getLocationType() {
+        return locationType;
+    }
+
+    public void setLocationType(String locationType) {
+        this.locationType = locationType;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
 }

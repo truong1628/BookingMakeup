@@ -2,6 +2,7 @@ package com.booking.bookingmakeup.controller.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +16,7 @@ import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.service.MakeupArtistService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/artists")
@@ -47,7 +49,7 @@ public class AdminArtistController {
     }
 
     @GetMapping("/add")
-    public String addArtistPage(Model model) {
+    public String create(Model model) {
 
         model.addAttribute("artist", new MakeupArtist());
 
@@ -55,8 +57,23 @@ public class AdminArtistController {
     }
 
     @PostMapping
-    public String saveArtist(
-            @ModelAttribute MakeupArtist artist) {
+    public String store(
+            @Valid @ModelAttribute("artist") MakeupArtist artist,
+            BindingResult result,
+            Model model) {
+
+        if (artistService.existsByEmail(artist.getEmail())) {
+
+            result.rejectValue(
+                    "email",
+                    "",
+                    "Email đã tồn tại");
+
+        }
+
+        if (result.hasErrors()) {
+            return "admin/artist-form";
+        }
 
         artistService.save(artist);
 
