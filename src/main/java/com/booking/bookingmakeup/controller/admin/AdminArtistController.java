@@ -1,5 +1,11 @@
 package com.booking.bookingmakeup.controller.admin;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.booking.bookingmakeup.entity.MakeupArtist;
 import com.booking.bookingmakeup.entity.User;
@@ -60,7 +68,9 @@ public class AdminArtistController {
     public String store(
             @Valid @ModelAttribute("artist") MakeupArtist artist,
             BindingResult result,
-            Model model) {
+            Model model,
+            @RequestParam("imageFile") MultipartFile imageFile)
+            throws IOException {
 
         if (artistService.existsByEmail(artist.getEmail())) {
 
@@ -71,8 +81,23 @@ public class AdminArtistController {
 
         }
 
-        if (result.hasErrors()) {
-            return "admin/artist-form";
+        if (!imageFile.isEmpty()) {
+
+            String fileName = System.currentTimeMillis()
+                    + "_" + imageFile.getOriginalFilename();
+
+            Path uploadPath = Paths.get("uploads/artists");
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Files.copy(
+                    imageFile.getInputStream(),
+                    uploadPath.resolve(fileName),
+                    StandardCopyOption.REPLACE_EXISTING);
+
+            artist.setImage("artists/" + fileName);
         }
 
         artistService.save(artist);

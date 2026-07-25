@@ -34,7 +34,6 @@ public class MakeupService {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @NotBlank(message = "Ảnh không được để trống")
     private String image;
 
 

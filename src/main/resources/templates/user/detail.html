@@ -16,8 +16,8 @@
 
         <div class="col-md-6">
 
-            <img th:src="@{/images/{img}(img=${service.image})}"
-            class="img-fluid rounded">
+            <img th:src="@{'/uploads/' + ${service.image}}"
+             class="img-fluid rounded">
 
         </div>
 

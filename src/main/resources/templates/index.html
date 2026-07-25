@@ -93,7 +93,7 @@
 
             <div class="card h-100 shadow">
 
-                <img th:src="@{/images/{img}(img=${service.image})}"
+                <img th:src="@{'/uploads/' + ${service.image}}"
                     class="card-img-top"
                     alt="Ảnh dịch vụ"
                     style="height:250px; object-fit:cover;">

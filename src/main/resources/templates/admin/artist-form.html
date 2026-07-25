@@ -18,7 +18,8 @@
     <h2 th:text="${artist.id == null ? 'Thêm Makeup Artist' : 'Sửa Makeup Artist'}"></h2>
         <form th:action="${artist.id == null} ? @{/admin/artists} : @{/admin/artists/{id}(id=${artist.id})}"
             th:object="${artist}"
-            method="post">
+            method="post"
+            enctype="multipart/form-data">
             <input th:if="${artist.id != null}" type="hidden" name="_method" value="put">
             
         
@@ -86,13 +87,22 @@
         </div>
 
         <div class="mb-3">
-            <label>Tên ảnh</label>
-            <input type="text"
-                   class="form-control"
-                   th:field="*{image}">
-            <div class="text-danger"
-                th:errors="*{image}">
+
+            <label>Ảnh Makeup Artist</label>
+
+            <input type="file"
+                class="form-control"
+                name="imageFile"
+                accept="image/*">
+
+            <div th:if="${artist.image != null and artist.image != ''}" class="mt-2">
+
+                <img th:src="@{'/uploads/' + ${artist.image}}"
+                    width="150"
+                    class="img-thumbnail">
+
             </div>
+
         </div>
         <div class="form-check mb-3">
 
