@@ -51,6 +51,7 @@
 
             <td>
 
+                <!-- Chưa xác nhận thì được hủy -->
                 <form
                     th:if="${booking.status == 'PENDING'}"
                     th:action="@{/booking/{id}(id=${booking.id})}"
@@ -72,11 +73,31 @@
 
                 </form>
 
+                <!-- Đã hoàn thành nhưng chưa đánh giá -->
+                <a th:if="${booking.status == 'COMPLETED' and !reviewService.hasReview(booking)}"
+                th:href="@{/review/{id}(id=${booking.id})}"
+                class="btn btn-primary btn-sm">
+
+                    ⭐ Đánh giá
+
+                </a>
+
+                <!-- Đã đánh giá -->
                 <span
-                    th:if="${booking.status != 'PENDING'}"
+                    th:if="${booking.status == 'COMPLETED' and reviewService.hasReview(booking)}"
+                    class="badge bg-success">
+
+                    Đã đánh giá
+
+                </span>
+
+                <!-- Các trạng thái khác -->
+                <span
+                    th:if="${booking.status != 'PENDING'
+                            and booking.status != 'COMPLETED'}"
                     class="text-secondary">
 
-                    Đã tiếp nhận 
+                    Đã tiếp nhận
 
                 </span>
 

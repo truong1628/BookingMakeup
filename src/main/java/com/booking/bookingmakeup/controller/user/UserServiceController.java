@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.booking.bookingmakeup.entity.MakeupService;
+import com.booking.bookingmakeup.service.ReviewService;
 import com.booking.bookingmakeup.service.ServiceService;
 
 
@@ -14,23 +16,38 @@ import com.booking.bookingmakeup.service.ServiceService;
 public class UserServiceController {
 
     private final ServiceService serviceService;
+    private final ReviewService reviewService;
 
-    public UserServiceController(ServiceService serviceService) {
+    public UserServiceController(
+            ServiceService serviceService,
+            ReviewService reviewService) {
+
         this.serviceService = serviceService;
+        this.reviewService = reviewService;
     }
 
     // ==========================
     // Xem chi tiết dịch vụ
     // GET /service/{id}
     // ==========================
-    @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+   @GetMapping("/{id}")
+    public String detail(
+            @PathVariable Long id,
+            Model model) {
+
+        MakeupService service = serviceService.getServiceById(id);
+
+        model.addAttribute("service", service);
 
         model.addAttribute(
-                "service",
-                serviceService.getServiceById(id));
+                "reviews",
+                reviewService.getReviewsByService(service));
 
-        return "/user/detail";
+        model.addAttribute(
+                "avgRating",
+                reviewService.getAverageRating(service));
+
+        return "user/detail";
     }
 
     // ==========================

@@ -46,6 +46,7 @@ public class Booking {
 
     private String cancelReason;
 
+
     @Column(columnDefinition = "NVARCHAR(255)")
     private String address;
     public Booking() {
@@ -119,4 +120,7 @@ public class Booking {
     }
     public String getCancelReason() { return cancelReason; }
     public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+    
+
+   
 }

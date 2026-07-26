@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Đánh giá</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+<h2>Đánh giá dịch vụ</h2>
+
+<h4 th:text="${booking.service.serviceName}"></h4>
+
+<form th:action="@{/review}"
+      th:object="${review}"
+      method="post">
+<input type="hidden"
+       name="bookingId"
+       th:value="${booking.id}">
+<div class="mb-3">
+
+<label>Số sao</label>
+
+<select class="form-select"
+        th:field="*{rating}">
+
+<option value="1">⭐ 1</option>
+<option value="2">⭐⭐ 2</option>
+<option value="3">⭐⭐⭐ 3</option>
+<option value="4">⭐⭐⭐⭐ 4</option>
+<option value="5">⭐⭐⭐⭐⭐ 5</option>
+
+</select>
+
+</div>
+
+<div class="mb-3">
+
+<label>Bình luận</label>
+
+<textarea
+class="form-control"
+rows="5"
+th:field="*{comment}">
+</textarea>
+
+</div>
+
+<button class="btn btn-success">
+
+Gửi đánh giá
+
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

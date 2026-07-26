@@ -53,4 +53,7 @@ public class MakeupArtistService {
 
         return repository.findAvailableArtists(date, time);
     }
+    public long countArtists() {
+        return repository.count();
+    }
 }

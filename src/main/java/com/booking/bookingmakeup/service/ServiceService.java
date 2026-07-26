@@ -28,4 +28,7 @@ public class ServiceService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+    public long countServices() {
+        return repository.count();
+    }
 }

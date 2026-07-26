@@ -45,4 +45,7 @@ public class UserService {
     public long countAll() {
         return userRepository.count();
     }
+    public long countUsers() {
+        return userRepository.count();
+    }
 }

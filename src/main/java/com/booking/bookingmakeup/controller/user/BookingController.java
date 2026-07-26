@@ -21,6 +21,7 @@ import com.booking.bookingmakeup.entity.Booking;
 import com.booking.bookingmakeup.entity.MakeupService;
 import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.service.BookingService;
+import com.booking.bookingmakeup.service.ReviewService;
 import com.booking.bookingmakeup.service.ServiceService;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,11 +32,15 @@ import jakarta.validation.Valid;
 public class BookingController {
     private final ServiceService serviceService;
     private final BookingService bookingService;
+    private final ReviewService reviewService;
     public BookingController(
             ServiceService serviceService,
-            BookingService bookingService) {
+            BookingService bookingService,
+            ReviewService reviewService) {
+
         this.serviceService = serviceService;
         this.bookingService = bookingService;
+        this.reviewService = reviewService;
     }
 
     // Hiển thị form đặt lịch
@@ -73,12 +78,22 @@ public String bookingPage(
 
     // Lịch của tôi
     @GetMapping("/my")
-    public String myBookings(HttpSession session,Model model) {
+    public String myBookings(HttpSession session, Model model) {
+
         User loginUser =(User) session.getAttribute("loginUser");
+
         if (loginUser == null) {
             return "redirect:/login";
         }
-        model.addAttribute("bookings",bookingService.getBookingsByUser(loginUser));
+
+        model.addAttribute(
+                "bookings",
+                bookingService.getBookingsByUser(loginUser));
+
+        model.addAttribute(
+                "reviewService",
+                reviewService);
+
         return "user/my-booking";
     }
 
