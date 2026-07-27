@@ -51,7 +51,19 @@ public class Booking {
     private String address;
     public Booking() {
     }
-    
+    @Column(length = 15)
+    private String phone;
+
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String note;
+    @Column
+    private Double distanceKm;
+
+    @Column
+    private Double travelFee;
+
+    @Column
+    private Double totalPrice;
 
     public Long getId() {
         return id;
@@ -120,7 +132,45 @@ public class Booking {
     }
     public String getCancelReason() { return cancelReason; }
     public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
-    
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Double getDistanceKm() {
+        return distanceKm;
+    }
+
+    public void setDistanceKm(Double distanceKm) {
+        this.distanceKm = distanceKm;
+    }
+
+    public Double getTravelFee() {
+        return travelFee;
+    }
+
+    public void setTravelFee(Double travelFee) {
+        this.travelFee = travelFee;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
    
 }

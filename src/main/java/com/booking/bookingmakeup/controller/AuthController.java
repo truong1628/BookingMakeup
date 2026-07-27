@@ -13,7 +13,6 @@ import com.booking.bookingmakeup.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
-
 @Controller
 public class AuthController {
 
@@ -25,15 +24,12 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-
         model.addAttribute("user", new User());
-
         return "register";
     }
 
     @GetMapping("/login")
     public String loginPage() {
-
         return "login";
     }
 
@@ -43,23 +39,18 @@ public class AuthController {
             RedirectAttributes redirectAttributes) {
 
         if (userService.existsByEmail(user.getEmail())) {
-
             redirectAttributes.addFlashAttribute(
                     "error",
                     "Email đã tồn tại!");
-
             return "redirect:/register";
         }
 
         user.setRole("USER");
-
-        // Sau đó mới lưu
         userService.save(user);
 
         redirectAttributes.addFlashAttribute(
                 "success",
                 "Đăng ký thành công!");
-
         return "redirect:/login";
     }
 
@@ -69,27 +60,33 @@ public class AuthController {
             @RequestParam String password,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
+
         User user = userService.login(email, password);
 
         if (user == null) {
-
             redirectAttributes.addFlashAttribute(
                     "error",
                     "Sai email hoặc mật khẩu!");
             return "redirect:/login";
         }
+
+        // Lưu thông tin người dùng vào Session
         session.setAttribute("loginUser", user);
 
+        // THÊM ĐOẠN ĐIỀU HƯỚNG THEO ROLE TẠI ĐÂY
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/admin"; // Chuyển sang Controller của Admin (Trang thống kê)
+        } else if ("ARTIST".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/artist/schedule"; // (Tùy chọn) Chuyển Artist về trang lịch làm việc
+        }
 
+        // Mặc định là USER sẽ về trang chủ mua sắm / đặt lịch
         return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-
         session.invalidate();
-
         return "redirect:/";
     }
-    
 }

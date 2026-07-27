@@ -1,0 +1,186 @@
+/* Custom Styles - DUNG DORYS */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2b2b2b;
+    background-color: #fcfbfb;
+}
+
+/* Button Styles */
+.btn-brand {
+    background-color: #d63384;
+    border-color: #d63384;
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn-brand:hover {
+    background-color: #b8216e;
+    border-color: #b8216e;
+    color: #fff;
+}
+
+.btn-outline-brand {
+    color: #d63384;
+    border-color: #d63384;
+    font-weight: 600;
+}
+
+.btn-outline-brand:hover {
+    background-color: #d63384;
+    color: #fff;
+}
+
+/* Card & Component Styles */
+.card-custom {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)), 
+                url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+    padding: 100px 0 120px 0;
+    color: #ffffff;
+}
+
+.search-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+/* Service Card */
+.card-service {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-service:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-service .img-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 260px;
+}
+
+.card-service img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease;
+}
+
+.card-service:hover img {
+    transform: scale(1.06);
+}
+
+.badge-duration {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+/* Service Details */
+.service-img-container {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.service-img-container img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.service-img-container:hover img {
+    transform: scale(1.03);
+}
+
+.info-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #f0f0f0;
+}
+
+/* Feature Box */
+.feature-box {
+    padding: 30px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.feature-box:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #fde8f2;
+    color: #d63384;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 20px auto;
+}
+
+/* Rating Stars */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.star-rating-input input {
+    display: none;
+}
+
+.star-rating-input label {
+    font-size: 1.8rem;
+    color: #ddd;
+    cursor: pointer;
+    padding: 0 3px;
+}
+
+.star-rating-input input:checked ~ label,
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+    color: #ffc107;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #fde8f2;
+    color: #d63384;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}

@@ -2,115 +2,200 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch của tôi | DUNG DORYS Makeup</title>
 
-    <title>Lịch của tôi</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<div class="container mt-5">
+    <!-- NAVBAR ĐỒNG BỘ -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i> 
+                <span style="letter-spacing: 1px;">DUNG DORYS</span>
+            </a>
 
-    <h2 class="mb-4">Lịch của tôi</h2>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <table class="table table-bordered table-striped">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#services">
+                            <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#why-us">
+                            <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">
+                            <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </li>
+                </ul>
 
-        <thead>
+                <!-- Chưa đăng nhập -->
+                <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
+                    <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fa-regular fa-user me-1"></i> Đăng nhập
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
+                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                    </a>
+                </div>
 
-        <tr>
+                <!-- Đã đăng nhập -->
+                <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                    <div class="text-white">
+                        <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
+                        <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
+                    </div>
 
-            <th>Dịch vụ</th>
-            <th>Makeup Artist</th>
-            <th>Ngày</th>
-            <th>Giờ</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
+                    <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light active rounded-pill px-3">
+                        <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
+                    </a>
 
-        </tr>
+                    <a th:if="${loginUser.role == 'ARTIST'}" th:href="@{/artist/schedule}" class="btn btn-sm btn-warning rounded-pill px-3">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Lịch làm việc
+                    </a>
 
-        </thead>
+                    <a href="/logout" class="btn btn-sm btn-danger rounded-circle p-2" title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-        <tbody>
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="container my-5">
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0" style="color: #d63384;">
+                    <i class="fa-regular fa-calendar-check me-2"></i> Lịch Đặt Của Tôi
+                </h3>
+            </div>
 
-        <tr th:each="booking : ${bookings}">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Dịch vụ</th>
+                            <th>Makeup Artist</th>
+                            <th>Ngày</th>
+                            <th>Giờ</th>
+                            <th>Địa điểm</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${bookings}">
+                            <td class="fw-bold" th:text="${booking.service.serviceName}"></td>
 
-            <td th:text="${booking.service.serviceName}"></td>
+                            <td th:text="${booking.artist != null ? booking.artist.fullName : 'Chưa phân công'}"></td>
+                            
+                            <td th:text="${booking.bookingDate}"></td>
 
-            <td th:text="${booking.artist != null ? booking.artist.fullName : 'Chưa có'}"></td>
-            
-            <td th:text="${booking.bookingDate}"></td>
+                            <td th:text="${booking.bookingTime}"></td>
 
-            <td th:text="${booking.bookingTime}"></td>
+                            <td>
+                                <div th:if="${booking.locationType == 'STUDIO'}">
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                                        <i class="fa-solid fa-store me-1"></i> Studio
+                                    </span>
+                                </div>
 
-            <td th:text="${booking.status}"></td>
+                                <div th:if="${booking.locationType == 'HOME'}" class="small">
+                                    <span class="badge bg-success rounded-pill px-3 py-2 mb-1">
+                                        <i class="fa-solid fa-house me-1"></i> Tại nhà
+                                    </span>
+                                    <div><strong>Địa chỉ:</strong> <span th:text="${booking.address}"></span></div>
+                                    <div><strong>SĐT:</strong> <span th:text="${booking.phone}"></span></div>
+                                    <div th:if="${booking.note != null and !#strings.isEmpty(booking.note)}">
+                                        <strong>Ghi chú:</strong> <span th:text="${booking.note}"></span>
+                                    </div>
+                                </div>
+                            </td>
 
-            <td>
+                            <td>
+                                <span th:if="${booking.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                <span th:if="${booking.status == 'CONFIRMED'}" class="badge bg-info text-dark">Đã xác nhận</span>
+                                <span th:if="${booking.status == 'COMPLETED'}" class="badge bg-success">Hoàn thành</span>
+                                <span th:if="${booking.status == 'CANCELLED'}" class="badge bg-secondary">Đã hủy</span>
+                            </td>
 
-                <!-- Chưa xác nhận thì được hủy -->
-                <form
-                    th:if="${booking.status == 'PENDING'}"
-                    th:action="@{/booking/{id}(id=${booking.id})}"
-                    method="post"
-                    style="display:inline">
+                            <td class="text-center">
+                                <!-- Chưa xác nhận thì được hủy -->
+                                <form th:if="${booking.status == 'PENDING'}"
+                                      th:action="@{/booking/{id}(id=${booking.id})}"
+                                      method="post"
+                                      style="display:inline">
 
-                    <input
-                        type="hidden"
-                        name="_method"
-                        value="delete">
+                                    <input type="hidden" name="_method" value="delete">
 
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="return confirm('Bạn có chắc muốn hủy lịch?')">
+                                    <button class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                            onclick="return confirm('Bạn có chắc muốn hủy lịch?')">
+                                        <i class="fa-solid fa-xmark me-1"></i> Hủy lịch
+                                    </button>
+                                </form>
 
-                        Hủy lịch
+                                <!-- Đã hoàn thành nhưng chưa đánh giá -->
+                                <a th:if="${booking.status == 'COMPLETED' and !reviewService.hasReview(booking)}"
+                                   th:href="@{/review/{id}(id=${booking.id})}"
+                                   class="btn btn-warning btn-sm rounded-pill px-3 text-dark fw-semibold">
+                                    <i class="fa-solid fa-star me-1"></i> Đánh giá
+                                </a>
 
-                    </button>
+                                <!-- Đã đánh giá -->
+                                <span th:if="${booking.status == 'COMPLETED' and reviewService.hasReview(booking)}"
+                                      class="badge bg-light text-success border border-success rounded-pill px-3 py-2">
+                                    <i class="fa-solid fa-check me-1"></i> Đã đánh giá
+                                </span>
 
-                </form>
+                                <!-- Các trạng thái khác -->
+                                <span th:if="${booking.status != 'PENDING' and booking.status != 'COMPLETED'}"
+                                      class="text-muted small">
+                                    <i class="fa-solid fa-clock-rotate-left me-1"></i> Đang xử lý
+                                </span>
+                            </td>
+                        </tr>
 
-                <!-- Đã hoàn thành nhưng chưa đánh giá -->
-                <a th:if="${booking.status == 'COMPLETED' and !reviewService.hasReview(booking)}"
-                th:href="@{/review/{id}(id=${booking.id})}"
-                class="btn btn-primary btn-sm">
+                        <!-- Trường hợp chưa có lịch đặt nào -->
+                        <tr th:if="${#lists.isEmpty(bookings)}">
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="fa-regular fa-calendar-xmark fa-2x mb-2 d-block"></i>
+                                Bạn chưa có lịch đặt dịch vụ nào.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-                    ⭐ Đánh giá
-
-                </a>
-
-                <!-- Đã đánh giá -->
-                <span
-                    th:if="${booking.status == 'COMPLETED' and reviewService.hasReview(booking)}"
-                    class="badge bg-success">
-
-                    Đã đánh giá
-
-                </span>
-
-                <!-- Các trạng thái khác -->
-                <span
-                    th:if="${booking.status != 'PENDING'
-                            and booking.status != 'COMPLETED'}"
-                    class="text-secondary">
-
-                    Đã tiếp nhận
-
-                </span>
-
-            </td>
-
-        </tr>
-
-        </tbody>
-
-    </table>
-
-</div>
-
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

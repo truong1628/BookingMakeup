@@ -3,150 +3,279 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Booking Makeup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUNG DORYS | Booking Makeup Chuyên Nghiệp</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-
-        <a class="navbar-brand" href="#">
-            💄 Booking Makeup
-        </a>
-
-        <div th:if="${loginUser == null}">
-
-            <a th:href="@{/login}"
-            class="btn btn-outline-light me-2">
-                Đăng nhập
+    <!-- NAVBAR ĐỒNG BỘ CHUẨN ICON -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i> 
+                <span style="letter-spacing: 1px;">DUNG DORYS</span>
             </a>
 
-            <a th:href="@{/register}"
-            class="btn btn-warning">
-                Đăng ký
-            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">
+                            <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#why-us">
+                            <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">
+                            <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </li>
+                </ul>
 
-        <div th:if="${loginUser != null}">
-
-            <span class="text-white me-3">
-                Xin chào
-                <b th:text="${loginUser.fullName}"></b>
-            </span>
-
-            <a th:if="${loginUser.role == 'USER'}"
-            th:href="@{/booking/my}"
-            class="btn btn-success">
-                Lịch của tôi
-            </a>
-
-            <a th:if="${loginUser.role == 'ADMIN'}"
-            href="/admin"
-            class="btn btn-warning">
-                Quản lý Booking
-            </a>
-            
-
-            <a href="/logout"
-            class="btn btn-danger">
-                Đăng xuất
-            </a>
-
-        </div>
-        
-
-    </div>
-</nav>
-
-<section class="py-5 bg-light">
-
-    <div class="container text-center">
-
-        <h1 class="display-4">
-            Đặt lịch Makeup Chuyên Nghiệp
-        </h1>
-
-        <p class="lead">
-
-            Đặt lịch nhanh chóng với các Makeup Artist uy tín.
-
-        </p>
-        <button class="btn btn-danger btn-lg">
-            Đặt lịch ngay
-        </button>
-
-    </div>
-
-</section>
-<section class="container my-5">
-
-    <h2 class="text-center mb-4">Dịch vụ nổi bật</h2>
-
-    <div class="row">
-
-        <div class="col-md-4 mb-4"
-             th:each="service : ${services}">
-
-            <div class="card h-100 shadow">
-
-                <img th:src="@{'/uploads/' + ${service.image}}"
-                    class="card-img-top"
-                    alt="Ảnh dịch vụ"
-                    style="height:250px; object-fit:cover;">
-
-                <div class="card-body">
-
-                    <h5 class="card-title"
-                        th:text="${service.serviceName}">
-                        Tên dịch vụ
-                    </h5>
-
-                    <p class="card-text">
-                        <strong>Giá:</strong>
-
-                        <span th:text="${service.price}">
-                            0
-                        </span>
-
-                        VNĐ
-                    </p>
-
-                    <p class="card-text">
-                        <strong>Thời gian:</strong>
-
-                        <span th:text="${service.duration}">
-                            0
-                        </span>
-
-                        phút
-                    </p>
-
-                    <p class="card-text"
-                       th:text="${service.description}">
-                        Mô tả
-                    </p>
-
-                    <a th:href="@{/service/{id}(id=${service.id})}"
-                        class="btn btn-primary">
-                        Xem chi tiết
+                <!-- Chưa đăng nhập -->
+                <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
+                    <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fa-regular fa-user me-1"></i> Đăng nhập
                     </a>
-
+                    <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
+                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                    </a>
                 </div>
 
+                <!-- Đã đăng nhập -->
+                <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                    <div class="text-white">
+                        <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
+                        <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
+                    </div>
+
+                    <!-- Role USER -->
+                    <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                        <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
+                    </a>
+    
+                    <a href="/logout" class="btn btn-sm btn-danger rounded-circle p-2" title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- JS Bootstrap -->
+
+
+    <!-- HERO BANNER -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-normal mb-3">✨ Trải nghiệm Make-up cao cấp</span>
+                    <h1 class="display-3 fw-bold mb-3">Tỏa Sáng Theo Cách Của Bạn</h1>
+                    <p class="lead mb-4 opacity-90">
+                        Đặt lịch làm đẹp nhanh chóng cùng các Makeup Artist chuyên nghiệp. Biến hóa phong cách cho tiệc, cô dâu, hay sự kiện quan trọng.
+                    </p>
+
+                    <!-- Search Box -->
+                    <div class="search-box text-start mt-4">
+                        <form th:action="@{/}" method="get" class="row g-2 align-items-center">
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                                    <input type="text" name="keyword" class="form-control border-0 py-2" placeholder="Tìm dịch vụ (Makeup cô dâu, dự tiệc, kỉ yếu...)" th:value="${keyword}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-brand w-100 py-2 rounded-3">
+                                    <i class="fa-solid fa-filter me-1"></i> Tìm Dịch Vụ
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section id="why-us" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row g-4 text-center">
+                <div class="col-md-4">
+                    <div class="feature-box h-100">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h5 class="fw-bold">Artist Chuyên Nghiệp</h5>
+                        <p class="text-muted mb-0">Đội ngũ chuyên viên được đào tạo bài bản, cập nhật liên tục các xu hướng trang điểm mới nhất.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box h-100">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-pump-soap"></i>
+                        </div>
+                        <h5 class="fw-bold">Mỹ Phẩm Chính Hãng</h5>
+                        <p class="text-muted mb-0">Cam kết 100% sử dụng mỹ phẩm cao cấp (MAC, Dior, Charlotte Tilbury...) an toàn cho mọi làn da.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box h-100">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <h5 class="fw-bold">Đúng Giờ & Linh Hoạt</h5>
+                        <p class="text-muted mb-0">Phục vụ tại Studio hoặc hỗ trợ trang điểm tận nơi theo yêu cầu của quý khách.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED SERVICES SECTION -->
+    <section id="services" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <span class="text-uppercase text-danger fw-bold fs-7 tracking-wider">Danh mục trang điểm</span>
+                <h2 class="fw-bold display-6 mt-1">Dịch Vụ Nổi Bật</h2>
+                <div class="mx-auto bg-danger mt-2" style="height: 3px; width: 60px; border-radius: 2px;"></div>
             </div>
 
+            <div class="row g-4">
+                <!-- Loop Services -->
+                <div class="col-md-6 col-lg-4" th:each="service : ${services}">
+                    <div class="card card-service h-100 shadow-sm">
+                        <div class="img-wrapper">
+                            <img th:src="${service.image != null ? '/uploads/' + service.image : 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800'}" 
+                                 alt="Ảnh dịch vụ">
+                            <span class="badge-duration">
+                                <i class="fa-regular fa-clock me-1"></i>
+                                <span th:text="${service.duration}">60</span> phút
+                            </span>
+                        </div>
+
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-danger border border-danger-subtle px-2 py-1">Hot Trend</span>
+                                <div class="text-warning small">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2" th:text="${service.serviceName}">Tên dịch vụ</h5>
+                            
+                            <p class="card-text text-muted small flex-grow-1" 
+                               th:text="${service.description != null && #strings.length(service.description) > 90 ? #strings.substring(service.description, 0, 90) + '...' : service.description}">
+                                Mô tả dịch vụ ngắn gọn...
+                            </p>
+
+                            <hr class="my-3 text-muted opacity-25">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Giá từ</small>
+                                    <span class="fs-5 fw-bold text-danger" 
+                                          th:text="${service.price != null ? #numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT') + ' đ' : 'Liên hệ'}">
+                                        500.000 đ
+                                    </span>
+                                </div>
+                                <a th:href="@{/service/{id}(id=${service.id})}" class="btn btn-outline-brand rounded-pill px-3">
+                                    Chi tiết <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khi không có dữ liệu -->
+                <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(services)}">
+                    <i class="fa-solid fa-magnifying-glass fs-1 text-muted mb-3 d-block"></i>
+                    <p class="text-muted fs-5">Hiện chưa có dịch vụ nào phù hợp với yêu cầu của bạn.</p>
+                    <a href="/" class="btn btn-brand rounded-pill px-4">Xem tất cả dịch vụ</a>
+                </div>
+            </div>
         </div>
+    </section>
 
-    </div>
+    <!-- FOOTER -->
+    <footer id="contact" class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold mb-3">💄 DUNG DORYS MAKEUP</h5>
+                    <p class="text-white-50 small">
+                        Dịch vụ trang điểm chuyên nghiệp cho cô dâu, sự kiện, kỉ yếu và tiệc đêm. Mang lại vẻ đẹp tự nhiên, sang trọng và quý phái nhất cho bạn.
+                    </p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
 
-</section>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Liên kết</h6>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Trang chủ</a></li>
+                        <li class="mb-2"><a href="#services" class="text-decoration-none text-white-50">Dịch vụ</a></li>
+                        <li class="mb-2"><a href="#why-us" class="text-decoration-none text-white-50">Về chúng tôi</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Thời gian làm việc</h6>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li class="mb-2"><i class="fa-regular fa-clock me-2"></i>Thứ 2 - Thứ 6: 08:00 - 20:00</li>
+                        <li class="mb-2"><i class="fa-regular fa-clock me-2"></i>Thứ 7 - Chủ Nhật: 07:00 - 21:00</li>
+                        <li class="mb-2"><i class="fa-solid fa-headset me-2"></i>Hỗ trợ 24/7 qua Hotline</li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Liên hệ Studio</h6>
+                    <p class="text-white-50 small mb-2"><i class="fa-solid fa-location-dot me-2"></i> 43 Trung Kính, Trung Hòa, Cầu Giấy, Hà Nội</p>
+                    <p class="text-white-50 small mb-2"><i class="fa-solid fa-phone me-2"></i> 090 123 4567</p>
+                    <p class="text-white-50 small"><i class="fa-solid fa-envelope me-2"></i> dungdorys.makeup@gmail.com</p>
+                </div>
+            </div>
+
+            <hr class="border-secondary">
+
+            <div class="text-center text-white-50 small pt-2">
+                © 2026 DUNG DORYS Booking Makeup. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>

@@ -64,7 +64,9 @@ public class AdminController {
 
         // 3. BỔ SUNG: Truyền danh sách Booking sang giao diện để hiển thị trên bảng (Table)
         model.addAttribute("bookings", bookingService.getAllBookings()); // Kiểm tra lại tên phương thức trong BookingService của bạn (ví dụ: findAll() hoặc getAllBookings())
-
+        model.addAttribute(
+        "artistRevenue",
+        bookingService.getArtistRevenue());
         return "admin/admin";
     }
 }

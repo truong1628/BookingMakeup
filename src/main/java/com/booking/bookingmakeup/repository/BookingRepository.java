@@ -15,7 +15,10 @@ import com.booking.bookingmakeup.entity.User;
 public interface BookingRepository extends JpaRepository<Booking, Long>{
 
     List<Booking> findByUser(User user);
-    List<Booking> findByArtistIdOrderByBookingDateAscBookingTimeAsc(Long artistId);    boolean existsByArtistAndBookingDateAndBookingTime(
+    List<Booking> findByStatus(String status);
+
+    List<Booking> findByArtistIdOrderByBookingDateAscBookingTimeAsc(Long artistId);    
+    boolean existsByArtistAndBookingDateAndBookingTime(
         MakeupArtist artist,
         LocalDate bookingDate,
         LocalTime bookingTime);
@@ -39,4 +42,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 
     List<Booking> findByArtistId(Long artistId);
     List<Booking> findByArtistIdOrderByIdDesc(Long artistId);
+
+    @Query("""
+        SELECT b.artist.fullName, SUM(b.service.price)
+        FROM Booking b
+        WHERE b.status = 'COMPLETED'
+        GROUP BY b.artist.fullName
+        ORDER BY 2 DESC
+        """)
+    List<Object[]> getArtistRevenue();
+    
 }

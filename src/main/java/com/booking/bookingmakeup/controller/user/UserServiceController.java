@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.booking.bookingmakeup.entity.MakeupService;
+import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.service.ReviewService;
 import com.booking.bookingmakeup.service.ServiceService;
 
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/service")
@@ -30,10 +32,15 @@ public class UserServiceController {
     // Xem chi tiết dịch vụ
     // GET /service/{id}
     // ==========================
-   @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public String detail(
             @PathVariable Long id,
+            HttpSession session, // 🟢 1. Thêm HttpSession
             Model model) {
+
+        // 🟢 2. Lấy thông tin user đã đăng nhập từ Session và truyền sang Thymeleaf
+        User loginUser = (User) session.getAttribute("loginUser");
+        model.addAttribute("loginUser", loginUser);
 
         MakeupService service = serviceService.getServiceById(id);
 
@@ -52,10 +59,14 @@ public class UserServiceController {
 
     // ==========================
     // Danh sách dịch vụ
-    // GET /service/services
+    // GET /service
     // ==========================
     @GetMapping
-    public String services(Model model) {
+    public String services(HttpSession session, Model model) { // 🟢 Thêm HttpSession
+
+        // 🟢 Truyền loginUser
+        User loginUser = (User) session.getAttribute("loginUser");
+        model.addAttribute("loginUser", loginUser);
 
         model.addAttribute(
                 "services",
@@ -63,6 +74,4 @@ public class UserServiceController {
 
         return "services";
     }
-
-
 }

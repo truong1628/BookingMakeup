@@ -3,32 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý booking</title>
-    <!-- Bootstrap CSS & Icons -->
+    <title>Trang chủ & Thống kê - DUNG DORYS ADMIN</title>
+    
+    <!-- Bootstrap 5 CSS & FontAwesome Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <style>
-        .chart-container {
-            max-width: 320px;
-            margin: 0 auto;
-        }
-        .fs-7 {
-            font-size: 0.8rem;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container my-4">
-    <!-- Header Page -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0 text-dark">Quản lý Booking</h2>
-        <a th:href="@{/}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Quay lại Trang chủ
+<!-- TOP NAVBAR HỆ THỐNG (MENU NGANG) -->
+<nav class="navbar navbar-expand-lg navbar-dark admin-navbar sticky-top">
+    <div class="container-fluid px-4">
+        <!-- Thương hiệu / Logo -->
+        <a class="navbar-brand me-4" th:href="@{/admin}">
+            DUNG DORYS ADMIN
         </a>
+
+        <!-- Nút Toggle cho màn hình nhỏ (Mobile) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarContent" 
+                aria-controls="adminNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Các mục Menu Ngang -->
+        <div class="collapse navbar-collapse" id="adminNavbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                <!-- 🟢 1. TRANG CHỦ / THỐNG KÊ -->
+                <li class="nav-item">
+                    <a th:href="@{/admin}" class="nav-link active">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Trang chủ & Thống kê</span>
+                    </a>
+                </li>
+
+                <!-- 2. QUẢN LÝ BOOKING -->
+                <li class="nav-item">
+                    <a th:href="@{/admin/bookings}" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Quản lý Đặt lịch</span>
+                    </a>
+                </li>
+
+                <!-- 3. QUẢN LÝ DỊCH VỤ -->
+                <li class="nav-item">
+                    <a th:href="@{/admin/services}" class="nav-link">
+                        <i class="fas fa-concierge-bell"></i>
+                        <span>Quản lý Dịch vụ</span>
+                    </a>
+                </li>
+
+                <!-- 4. QUẢN LÝ ARTIST -->
+                <li class="nav-item">
+                    <a th:href="@{/admin/artists}" class="nav-link">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Quản lý Artist</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Nút đăng xuất/Quay về Client (Tùy chọn thêm vào bên phải navbar) -->
+            <div class="d-flex align-items-center gap-2">
+                <a th:href="@{/logout}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="fas fa-sign-out-alt me-1"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- NỘI DUNG CHÍNH (MAIN CONTENT) -->
+<div class="container-fluid px-4 main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">Tổng quan</h3>
+        <span class="text-muted fs-7">Chào mừng quay trở lại Trang quản trị</span>
     </div>
 
-    <!-- Thống kê hệ thống -->
+    <!-- Thống kê tổng quan -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm bg-primary text-white">
@@ -76,9 +129,9 @@
         </div>
     </div>
 
-    <!-- Layout Biểu đồ & Thẻ trạng thái -->
+    <!-- Layout Biểu đồ & Thẻ trạng thái & Doanh thu -->
     <div class="row g-4 mb-4">
-        <!-- Chart.js -->
+        <!-- Biểu đồ Chart.js -->
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white py-3 border-0">
@@ -92,167 +145,83 @@
             </div>
         </div>
 
-        <!-- 5 Thẻ chỉ số chi tiết -->
+        <!-- Chỉ số chi tiết & Doanh thu -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white py-3 border-0">
                     <h5 class="card-title mb-0 fw-bold">Thống kê chỉ số Lịch đặt</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3">
+                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 mb-4">
                         <div class="col">
                             <div class="card text-bg-primary h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 opacity-75 text-uppercase fs-7">Tổng lịch</h6>
-                                    <h2 class="card-title mb-0 fw-bold" th:text="${totalBookings}">0</h2>
+                                <div class="card-body text-center py-2">
+                                    <h6 class="card-subtitle mb-1 opacity-75 text-uppercase fs-7">Tổng lịch</h6>
+                                    <h3 class="card-title mb-0 fw-bold" th:text="${totalBookings}">0</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card text-bg-warning h-100 border-0 shadow-sm">
-                                <div class="card-body text-center text-dark">
-                                    <h6 class="card-subtitle mb-2 opacity-75 text-uppercase fs-7">Chờ xác nhận</h6>
-                                    <h2 class="card-title mb-0 fw-bold" th:text="${pendingBookings}">0</h2>
+                                <div class="card-body text-center text-dark py-2">
+                                    <h6 class="card-subtitle mb-1 opacity-75 text-uppercase fs-7">Chờ xác nhận</h6>
+                                    <h3 class="card-title mb-0 fw-bold" th:text="${pendingBookings}">0</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card text-bg-success h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 opacity-75 text-uppercase fs-7">Đã xác nhận</h6>
-                                    <h2 class="card-title mb-0 fw-bold" th:text="${confirmedBookings}">0</h2>
+                                <div class="card-body text-center py-2">
+                                    <h6 class="card-subtitle mb-1 opacity-75 text-uppercase fs-7">Đã xác nhận</h6>
+                                    <h3 class="card-title mb-0 fw-bold" th:text="${confirmedBookings}">0</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card text-bg-info text-white h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 opacity-75 text-uppercase fs-7">Đã hoàn thành</h6>
-                                    <h2 class="card-title mb-0 fw-bold" th:text="${completedBookings}">0</h2>
+                                <div class="card-body text-center py-2">
+                                    <h6 class="card-subtitle mb-1 opacity-75 text-uppercase fs-7">Đã hoàn thành</h6>
+                                    <h3 class="card-title mb-0 fw-bold" th:text="${completedBookings}">0</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card text-bg-danger h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 opacity-75 text-uppercase fs-7">Đã hủy</h6>
-                                    <h2 class="card-title mb-0 fw-bold" th:text="${cancelledBookings}">0</h2>
+                                <div class="card-body text-center py-2">
+                                    <h6 class="card-subtitle mb-1 opacity-75 text-uppercase fs-7">Đã hủy</h6>
+                                    <h3 class="card-title mb-0 fw-bold" th:text="${cancelledBookings}">0</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Doanh thu Artist -->
+                    <div class="border-top pt-3">
+                        <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-cash-stack me-1 text-success"></i> Doanh thu Makeup Artist</h6>
+                        <div class="table-responsive" style="max-height: 180px; overflow-y: auto;">
+                            <table class="table table-sm table-hover table-bordered align-middle mb-0">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Makeup Artist</th>
+                                        <th class="text-end">Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${artistRevenue}">
+                                        <td class="fw-semibold" th:text="${item[0]}">Dung Dorys</td>
+                                        <td class="text-end fw-bold text-success">
+                                            <span th:if="${item[1] != null}" th:text="${#numbers.formatDecimal(item[1], 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                                            <span th:if="${item[1] == null}">0 VNĐ</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(artistRevenue)}">
+                                        <td colspan="2" class="text-center text-muted py-3">Chưa có dữ liệu doanh thu.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bảng danh sách lịch đặt -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-0">
-            <h5 class="card-title mb-0 fw-bold">Danh sách Lịch đặt</h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="ps-3">ID</th>
-                            <th>Khách hàng</th>
-                            <th>Dịch vụ</th>
-                            <th>Makeup Artist</th>
-                            <th>Ngày</th>
-                            <th>Giờ</th>
-                            <th class="text-center">Trạng thái</th>
-                            <th class="text-end pe-3">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="booking : ${bookings}">
-                            <td class="ps-3 fw-semibold" th:text="${booking.id}"></td>
-                            <td th:text="${booking.user != null ? booking.user.fullName : 'N/A'}"></td>
-                            <td th:text="${booking.service != null ? booking.service.serviceName : 'N/A'}"></td>
-                            <td>
-                                <span th:if="${booking.artist != null}" th:text="${booking.artist.fullName}"></span>
-                                <span th:if="${booking.artist == null}" class="badge bg-warning text-dark">Chưa phân công</span>
-                            </td>
-                            <td th:text="${booking.bookingDate}"></td>
-                            <td th:text="${booking.bookingTime}"></td>
-                            
-                            <!-- Cột Trạng thái -->
-                            <td class="text-center">
-                                <span th:if="${booking.status == 'PENDING'}" class="badge rounded-pill text-bg-warning px-3 py-2">Chờ xác nhận</span>
-                                <span th:if="${booking.status == 'CONFIRMED'}" class="badge rounded-pill text-bg-success px-3 py-2">Đã xác nhận</span>
-                                <span th:if="${booking.status == 'CANCEL_REQUESTED'}" class="badge rounded-pill text-bg-danger px-3 py-2">Yêu cầu hủy</span>
-                                <span th:if="${booking.status == 'COMPLETED'}" class="badge rounded-pill text-bg-primary px-3 py-2">Đã hoàn thành</span>
-                                <span th:if="${booking.status == 'CANCELLED'}" class="badge rounded-pill text-bg-secondary px-3 py-2">Đã hủy</span>
-                            </td>
-                            
-                            <!-- Cột Thao tác -->
-                            <td class="text-end pe-3">
-                                <!-- PENDING -->
-                                <div th:if="${booking.status == 'PENDING'}" class="btn-group">
-                                    <a th:href="@{/admin/bookings/{id}/assign(id=${booking.id})}" class="btn btn-outline-primary btn-sm">
-                                        <span th:if="${booking.artist == null}">Phân công</span>
-                                        <span th:if="${booking.artist != null}">Đổi Artist</span>
-                                    </a>
-
-                                    <form th:if="${booking.artist != null}" th:action="@{/admin/bookings/{id}/confirm(id=${booking.id})}" method="post" style="display:inline;">
-                                        <input type="hidden" name="_method" value="put">
-                                        <button class="btn btn-success btn-sm ms-1">Xác nhận</button>
-                                    </form>
-
-                                    <form th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
-                                        <input type="hidden" name="_method" value="put">
-                                        <button class="btn btn-outline-danger btn-sm ms-1" onclick="return confirm('Bạn có chắc muốn hủy?')">Hủy</button>
-                                    </form>
-                                </div>
-
-                                <!-- CONFIRMED -->
-                                <div th:if="${booking.status == 'CONFIRMED'}" class="btn-group">
-                                    <form th:action="@{/admin/bookings/{id}/complete(id=${booking.id})}" method="post" style="display:inline;">
-                                        <input type="hidden" name="_method" value="put">
-                                        <button class="btn btn-primary btn-sm">Hoàn thành</button>
-                                    </form>
-
-                                    <form th:action="@{/admin/bookings/{id}/cancel(id=${booking.id})}" method="post" style="display:inline;">
-                                        <input type="hidden" name="_method" value="put">
-                                        <button class="btn btn-outline-danger btn-sm ms-1" onclick="return confirm('Bạn có chắc muốn hủy?')">Hủy</button>
-                                    </form>
-                                </div>
-
-                                <!-- CANCEL_REQUESTED -->
-                                <div th:if="${booking.status == 'CANCEL_REQUESTED'}" class="text-end">
-                                    <span class="badge bg-warning text-dark d-inline-block mb-1">Artist xin hủy</span>
-                                    <small class="text-danger d-block mb-1 fs-7" th:text="'Lý do: ' + ${booking.cancelReason}"></small>
-                                    
-                                    <div class="btn-group">
-                                        <form th:action="@{/admin/bookings/{id}/approve-cancel(id=${booking.id})}" method="post" style="display:inline">
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xác nhận đồng ý hủy đơn này?')">Duyệt Hủy</button>
-                                        </form>
-
-                                        <form th:action="@{/admin/bookings/{id}/reject-cancel(id=${booking.id})}" method="post" style="display:inline">
-                                            <button type="submit" class="btn btn-secondary btn-sm ms-1">Từ chối</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <!-- COMPLETED -->
-                                <span th:if="${booking.status == 'COMPLETED'}" class="text-success fw-bold fs-7">
-                                    <i class="bi bi-check-circle-fill me-1"></i>Hoàn thành
-                                </span>
-
-                                <!-- CANCELLED -->
-                                <span th:if="${booking.status == 'CANCELLED'}" class="text-muted fw-bold fs-7">
-                                    <i class="bi bi-x-circle-fill me-1"></i>Đã hủy
-                                </span>
-                            </td>
-                        </tr>
-                        
-                        <tr th:if="${#lists.isEmpty(bookings)}">
-                            <td colspan="8" class="text-center py-4 text-muted">Không có lịch đặt nào được tìm thấy.</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -262,8 +231,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
     const ctx = document.getElementById('bookingChart');
-
-    // Đồng bộ đúng tên biến truyền từ Spring Controller
     const pendingVal = /*[[${pendingBookings}]]*/ 0;
     const confirmedVal = /*[[${confirmedBookings}]]*/ 0;
     const completedVal = /*[[${completedBookings}]]*/ 0;
@@ -272,20 +239,10 @@
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: [
-                'Chờ xác nhận',
-                'Đã xác nhận',
-                'Đã hoàn thành',
-                'Đã hủy'
-            ],
+            labels: ['Chờ xác nhận', 'Đã xác nhận', 'Đã hoàn thành', 'Đã hủy'],
             datasets: [{
                 data: [pendingVal, confirmedVal, completedVal, cancelledVal],
-                backgroundColor: [
-                    '#ffc107',
-                    '#198754',
-                    '#0d6efd',
-                    '#dc3545'
-                ],
+                backgroundColor: ['#ffc107', '#198754', '#0d6efd', '#dc3545'],
                 borderWidth: 2
             }]
         },
@@ -293,17 +250,10 @@
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        boxWidth: 12,
-                        padding: 15
-                    }
-                }
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }
             }
         }
     });
 </script>
-
 </body>
 </html>

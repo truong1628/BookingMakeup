@@ -48,6 +48,7 @@ public class AdminServiceController {
     // Danh sách dịch vụ
     // GET /admin/services
     // =============================
+   
     @GetMapping
     public String index(
             HttpSession session,
@@ -59,7 +60,7 @@ public class AdminServiceController {
 
         model.addAttribute(
                 "services",
-                serviceService.getAllServices());
+                serviceService.getActiveServices());
 
         return "admin/services";
     }

@@ -16,19 +16,35 @@ public class ServiceService {
         this.repository = repository;
     }
 
+    // Lấy tất cả dịch vụ (bao gồm cả dịch vụ đã ẩn - thường dùng cho Admin)
     public List<MakeupService> getAllServices() {
         return repository.findAll();
     }
+
+    // Lấy danh sách dịch vụ đang hoạt động (dùng hiển thị cho Khách hàng đặt lịch)
+    public List<MakeupService> getActiveServices() {
+        return repository.findByActiveTrue();
+    }
+
     public MakeupService getServiceById(Long id) {
         return repository.findById(id).orElse(null);
     }
+
     public MakeupService save(MakeupService service) {
         return repository.save(service);
     }
+
+    // Chuyển từ deleteById (Xóa cứng) sang Soft Delete (Đổi active = false)
     public void delete(Long id) {
-        repository.deleteById(id);
+        MakeupService service = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ với ID: " + id));
+        
+        service.setActive(false);
+        repository.save(service);
     }
+
+    // Đếm tổng số dịch vụ đang hoạt động
     public long countServices() {
-        return repository.count();
+        return repository.countByActiveTrue();
     }
 }

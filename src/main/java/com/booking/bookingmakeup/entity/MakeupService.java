@@ -36,12 +36,15 @@ public class MakeupService {
 
     private String image;
 
+    // Trạng thái dịch vụ: true = Hoạt động, false = Ngừng hoạt động (Xóa mềm)
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
 
     public MakeupService() {
     }
 
     public Long getId() { return id; }
-    public void setId(Long id) {this.id = id;}
+    public void setId(Long id) { this.id = id; }
     public String getServiceName() { return serviceName; }
     public void setServiceName(String serviceName) { this.serviceName = serviceName; }
     public Double getPrice() { return price; }
@@ -52,4 +55,8 @@ public class MakeupService {
     public void setDescription(String description) { this.description = description; }
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
+    
+    // Getter & Setter cho field active
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 }

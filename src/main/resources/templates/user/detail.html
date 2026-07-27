@@ -3,118 +3,299 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Chi tiết dịch vụ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${service.serviceName} + ' | DUNG DORYS Makeup'">Chi tiết dịch vụ</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<div class="container mt-5">
-
-    <div class="row">
-
-        <div class="col-md-6">
-
-            <img th:src="@{'/uploads/' + ${service.image}}"
-             class="img-fluid rounded">
-
-        </div>
-
-        <div class="col-md-6">
-
-            <h2 th:text="${service.serviceName}"></h2>
-            
-            <h4 class="text-danger mt-3">
-                <span th:text="${service.price}"></span> VNĐ
-            </h4>
-
-            <p class="mt-3">
-                <strong>Thời gian:</strong>
-                <span th:text="${service.duration}"></span> phút
-            </p>
-
-            <p th:text="${service.description}"></p>
-
-            <a th:href="@{/booking/create/{id}(id=${service.id})}"
-                class="btn btn-danger btn-lg">
-                Đặt lịch ngay
+    <!-- NAVBAR ĐỒNG BỘ -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i> 
+                <span style="letter-spacing: 1px;">DUNG DORYS</span>
             </a>
 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/#services">
+                            <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#why-us">
+                            <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">
+                            <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Chưa đăng nhập -->
+                <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
+                    <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fa-regular fa-user me-1"></i> Đăng nhập
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
+                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                    </a>
+                </div>
+
+                <!-- Đã đăng nhập -->
+                <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                    <div class="text-white">
+                        <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
+                        <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
+                    </div>
+
+                    <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                        <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
+                    </a>
+
+                    <a th:if="${loginUser.role == 'ARTIST'}" th:href="@{/artist/schedule}" class="btn btn-sm btn-warning rounded-pill px-3">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Lịch làm việc
+                    </a>
+
+                    <a href="/logout" class="btn btn-sm btn-danger rounded-circle p-2" title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CHI TIẾT DỊCH VỤ SECTION -->
+    <div class="container my-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="/#services" class="text-decoration-none text-muted">Dịch vụ</a></li>
+                <li class="breadcrumb-item active text-danger fw-bold" aria-current="page" th:text="${service.serviceName}">Tên dịch vụ</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <!-- Ảnh Dịch vụ -->
+            <div class="col-lg-6">
+                <div class="service-img-container">
+                    <img th:src="${service.image != null ? '/uploads/' + service.image : 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800'}"
+                         alt="Ảnh dịch vụ">
+                </div>
+            </div>
+
+            <!-- Thông tin Dịch vụ -->
+            <div class="col-lg-6 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fw-bold mb-2">
+                        ✨ Dịch vụ nổi bật
+                    </span>
+                    
+                    <h1 class="fw-bold display-5 mb-3" th:text="${service.serviceName}">Tên dịch vụ Makeup</h1>
+
+                    <!-- Rating tóm tắt -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="text-warning fs-5 me-2">
+                            <span th:each="i : ${#numbers.sequence(1,5)}">
+                                <i th:if="${i <= avgRating}" class="fa-solid fa-star"></i>
+                                <i th:if="${i > avgRating}" class="fa-regular fa-star text-muted opacity-50"></i>
+                            </span>
+                        </div>
+                        <span class="fw-bold me-1" th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">5.0</span>
+                        <span class="text-muted">
+                            (<span th:text="${#lists.size(reviews)}">0</span> đánh giá)
+                        </span>
+                    </div>
+
+                    <!-- Giá tiền -->
+                    <div class="p-3 bg-light rounded-3 mb-4 d-inline-block w-100">
+                        <small class="text-muted d-block">Giá dịch vụ trọn gói:</small>
+                        <h2 class="text-danger fw-bold mb-0">
+                            <span th:text="${service.price != null ? #numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT') : '0'}">0</span> VNĐ
+                        </h2>
+                    </div>
+
+                    <!-- Thời gian & Cam kết -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-white">
+                                <i class="fa-regular fa-clock text-danger fs-4 mb-2"></i>
+                                <small class="d-block text-muted">Thời gian thực hiện</small>
+                                <span class="fw-bold" th:text="${service.duration} + ' phút'">60 phút</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border rounded-3 bg-white">
+                                <i class="fa-solid fa-shield-halved text-danger fs-4 mb-2"></i>
+                                <small class="d-block text-muted">Cam kết mỹ phẩm</small>
+                                <span class="fw-bold">100% Chính hãng</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mô tả -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-2">Mô tả chi tiết:</h5>
+                        <p class="text-secondary leading-relaxed" th:text="${service.description}" style="white-space: pre-line;">
+                            Mô tả chi tiết về phong cách trang điểm, quy trình và ưu đãi đi kèm...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div>
+                    <a th:href="@{/booking/create/{id}(id=${service.id})}" class="btn btn-brand btn-lg w-100 py-3 rounded-pill shadow-sm fs-5">
+                        <i class="fa-regular fa-calendar-check me-2"></i>Đặt Lịch Ngay
+                    </a>
+                </div>
+            </div>
         </div>
 
+        <hr class="my-5 opacity-25">
+
+        <!-- ĐÁNH GIÁ KHÁCH HÀNG SECTION -->
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-4">
+                    <i class="fa-solid fa-comments text-danger me-2"></i>Đánh giá của khách hàng
+                </h3>
+
+                <!-- Tổng quan Đánh giá -->
+                <div class="info-card mb-4 d-flex align-items-center gap-4 bg-light border-0">
+                    <div class="text-center px-3">
+                        <h1 class="display-3 fw-bold text-danger mb-0" th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">5.0</h1>
+                        <div class="text-warning fs-5">
+                            <span th:each="i : ${#numbers.sequence(1,5)}">
+                                <i th:if="${i <= avgRating}" class="fa-solid fa-star"></i>
+                                <i th:if="${i > avgRating}" class="fa-regular fa-star text-muted opacity-50"></i>
+                            </span>
+                        </div>
+                        <small class="text-muted" th:text="${#lists.size(reviews)} + ' đánh giá'">0 đánh giá</small>
+                    </div>
+                    <div class="vr my-2"></div>
+                    <div class="flex-grow-1">
+                        <p class="mb-0 text-muted">Tất cả nhận xét đều từ những khách hàng đã trực tiếp trải nghiệm dịch vụ trang điểm tại DUNG DORYS.</p>
+                    </div>
+                </div>
+
+                
+
+                <!-- Thông báo chưa có nhận xét -->
+                <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-secondary text-center py-4 rounded-4">
+                    <i class="fa-regular fa-comment-dots fs-2 text-muted mb-2 d-block"></i>
+                    Chưa có đánh giá nào cho dịch vụ này. Hãy là người đầu tiên trải nghiệm và đánh giá!
+                </div>
+
+                <!-- Danh sách Reviews -->
+                <div th:each="review : ${reviews}" class="info-card mb-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="user-avatar">
+                            <span th:text="${review.user != null && review.user.fullName != null ? #strings.substring(review.user.fullName, 0, 1) : 'U'}">U</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="fw-bold mb-0" th:text="${review.user != null ? review.user.fullName : 'Khách hàng'}">Tên người dùng</h6>
+                                <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</small>
+                            </div>
+
+                            <!-- Star Rating -->
+                            <div class="text-warning small mb-2">
+                                <span th:each="i : ${#numbers.sequence(1,5)}">
+                                    <i th:if="${i <= review.rating}" class="fa-solid fa-star"></i>
+                                    <i th:if="${i > review.rating}" class="fa-regular fa-star text-muted opacity-40"></i>
+                                </span>
+                            </div>
+
+                            <p class="mb-0 text-secondary" th:text="${review.comment}">Nội dung nhận xét đánh giá...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sidebar chính sách hỗ trợ -->
+            <div class="col-lg-4">
+                <div class="info-card bg-light border-0">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-circle-info text-danger me-2"></i>Lưu ý khi đặt lịch</h5>
+                    <ul class="list-unstyled small text-secondary mb-0">
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Quý khách vui lòng đến đúng giờ đã hẹn để được phục vụ tốt nhất.</li>
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Nếu chọn dịch vụ tại nhà, địa chỉ chính xác sẽ được xác nhận qua cuộc gọi.</li>
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Có thể yêu cầu hủy/thay đổi lịch trước 24h.</li>
+                        <li><i class="fa-solid fa-phone text-danger me-2"></i>Hotline tư vấn: <strong>090 123 4567</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
-</div>
-<hr class="my-5">
+    <!-- FOOTER -->
+    <footer id="contact" class="bg-dark text-white pt-5 pb-4 mt-5">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold mb-3">💄 DUNG DORYS MAKEUP</h5>
+                    <p class="text-white-50 small">
+                        Dịch vụ trang điểm chuyên nghiệp cho cô dâu, sự kiện, kỉ yếu và tiệc đêm. Mang lại vẻ đẹp tự nhiên, sang trọng và quý phái nhất cho bạn.
+                    </p>
+                </div>
 
-<h3>Đánh giá của khách hàng</h3>
-<div class="mb-3">
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Liên kết</h6>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li class="mb-2"><a href="/" class="text-decoration-none text-white-50">Trang chủ</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-decoration-none text-white-50">Dịch vụ</a></li>
+                        <li class="mb-2"><a href="/#why-us" class="text-decoration-none text-white-50">Về chúng tôi</a></li>
+                    </ul>
+                </div>
 
-    <span class="text-warning fs-4">
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Thời gian làm việc</h6>
+                    <ul class="list-unstyled text-white-50 small">
+                        <li class="mb-2"><i class="fa-regular fa-clock me-2"></i>Thứ 2 - Thứ 6: 08:00 - 20:00</li>
+                        <li class="mb-2"><i class="fa-regular fa-clock me-2"></i>Thứ 7 - Chủ Nhật: 07:00 - 21:00</li>
+                    </ul>
+                </div>
 
-        <span th:each="i : ${#numbers.sequence(1,5)}">
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3 text-uppercase">Liên hệ Studio</h6>
+                    <p class="text-white-50 small mb-2"><i class="fa-solid fa-location-dot me-2"></i> 123 Đường Makeup, TP. Hồ Chí Minh</p>
+                    <p class="text-white-50 small mb-2"><i class="fa-solid fa-phone me-2"></i> 090 123 4567</p>
+                </div>
+            </div>
 
-            <span th:if="${i <= avgRating}">⭐</span>
+            <hr class="border-secondary">
 
-            <span th:if="${i > avgRating}">☆</span>
+            <div class="text-center text-white-50 small pt-2">
+                © 2026 DUNG DORYS Booking Makeup. All rights reserved.
+            </div>
+        </div>
+    </footer>
 
-        </span>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    </span>
-
-    <strong
-        th:text="${#numbers.formatDecimal(avgRating,1,1)}">
-    </strong>
-
-    /5
-
-    (<span th:text="${#lists.size(reviews)}"></span>
-    đánh giá)
-
-</div>
-<div th:if="${#lists.isEmpty(reviews)}"
-     class="alert alert-secondary">
-
-    Chưa có đánh giá nào.
-
-</div>
-
-<div th:each="review : ${reviews}"
-     class="card mb-3">
-
-    <div class="card-body">
-
-        <h5 class="card-title"
-            th:text="${review.user.fullName}">
-        </h5>
-
-        <p class="text-warning fs-5">
-
-    <span th:each="i : ${#numbers.sequence(1,5)}">
-
-        <span th:if="${i <= review.rating}">
-            ⭐
-        </span>
-
-        <span th:if="${i > review.rating}">
-            ☆
-        </span>
-
-    </span>
-
-</p>
-
-        <p class="card-text"
-           th:text="${review.comment}">
-        </p>
-
-        <small class="text-muted"
-               th:text="${#temporals.format(review.createdAt,'dd/MM/yyyy HH:mm')}">
-        </small>
-
-    </div>
-
-</div>
 </body>
 </html>

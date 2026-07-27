@@ -236,5 +236,9 @@ public class BookingService {
         booking.setStatus("CONFIRMED"); // Từ chối hủy -> Quay về trạng thái Đã xác nhận
         bookingRepository.save(booking);
     }
+
+    public List<Object[]> getArtistRevenue() {
+        return bookingRepository.getArtistRevenue();
+    }
     
 }
