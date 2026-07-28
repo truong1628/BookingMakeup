@@ -1,5 +1,6 @@
 package com.booking.bookingmakeup.controller.artist;
 
+import java.util.Enumeration;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ import com.booking.bookingmakeup.service.MakeupArtistService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/artist") // 👈 1. Đặt prefix /artist ở đây cho gọn
+@RequestMapping("/artist")
 public class ArtistController {
 
     private final MakeupArtistService artistService;
@@ -28,6 +29,29 @@ public class ArtistController {
     public ArtistController(MakeupArtistService artistService, BookingService bookingService) {
         this.artistService = artistService;
         this.bookingService = bookingService;
+    }
+
+    // Hàm lấy ID an toàn bất kể đăng nhập từ AuthController hay ArtistController
+    private Long getArtistIdFromSession(HttpSession session) {
+        Object loginArtist = session.getAttribute("loginArtist");
+        if (loginArtist != null) {
+            try {
+                return (Long) loginArtist.getClass().getMethod("getId").invoke(loginArtist);
+            } catch (Exception ignored) {}
+        }
+        
+        // Quét dự phòng tất cả attribute khác
+        Enumeration<String> keys = session.getAttributeNames();
+        while (keys.hasMoreElements()) {
+            Object obj = session.getAttribute(keys.nextElement());
+            if (obj != null) {
+                try {
+                    Object id = obj.getClass().getMethod("getId").invoke(obj);
+                    if (id instanceof Long) return (Long) id;
+                } catch (Exception ignored) {}
+            }
+        }
+        return null;
     }
 
     @GetMapping("/login")
@@ -53,26 +77,23 @@ public class ArtistController {
         return "redirect:/artist/bookings";
     }
 
-    // 👈 2. Tất cả đường dẫn /artist, /artist/dashboard, /artist/bookings gom về 1 hàm duy nhất
-    @GetMapping({"", "/dashboard", "/bookings"})
+    // 👈 Đã thêm "/schedule" vào danh sách Mapping để bao quát toàn bộ URL
+    @GetMapping({"", "/dashboard", "/bookings", "/schedule"})
     public String showArtistBookings(HttpSession session, Model model) {
-        MakeupArtist currentArtist = (MakeupArtist) session.getAttribute("loginArtist");
+        Long artistId = getArtistIdFromSession(session);
 
-        if (currentArtist == null) {
+        if (artistId == null) {
             return "redirect:/artist/login";
         }
 
-        System.out.println("==================================================");
-        System.out.println(">>> ĐANG LẤY LỊCH CHO ARTIST ID = " + currentArtist.getId());
+        Object currentArtist = session.getAttribute("loginArtist");
+        if (currentArtist == null) currentArtist = session.getAttribute("artist");
+        if (currentArtist == null) currentArtist = session.getAttribute("loginUser");
 
-        List<Booking> bookings = bookingService.getBookingsByArtist(currentArtist.getId());
-        
-        System.out.println(">>> SỐ LƯỢNG BOOKING TÌM THẤY = " + (bookings != null ? bookings.size() : 0));
-        System.out.println("==================================================");
+        List<Booking> bookings = bookingService.getBookingsByArtist(artistId);
 
-        // Truyền đầy đủ dữ liệu sang Thymeleaf
         model.addAttribute("bookings", bookings);
-        model.addAttribute("artist", currentArtist); 
+        model.addAttribute("artist", currentArtist);
 
         return "artist/bookings";
     }
@@ -88,6 +109,7 @@ public class ArtistController {
         bookingService.finishBooking(id);
         return "redirect:/artist/bookings";
     }
+
     @PostMapping("/bookings/{id}/request-cancel")
     public String requestCancel(
             @PathVariable Long id,

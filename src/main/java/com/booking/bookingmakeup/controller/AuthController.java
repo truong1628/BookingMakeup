@@ -34,53 +34,41 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(
-            @ModelAttribute User user,
-            RedirectAttributes redirectAttributes) {
-
+    public String register(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         if (userService.existsByEmail(user.getEmail())) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Email đã tồn tại!");
+            redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
             return "redirect:/register";
         }
-
         user.setRole("USER");
         userService.save(user);
-
-        redirectAttributes.addFlashAttribute(
-                "success",
-                "Đăng ký thành công!");
+        redirectAttributes.addFlashAttribute("success", "Đăng ký thành công!");
         return "redirect:/login";
     }
 
     @PostMapping("/login")
-    public String login(
-            @RequestParam String email,
-            @RequestParam String password,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpSession session,
+                        RedirectAttributes redirectAttributes) {
 
         User user = userService.login(email, password);
 
         if (user == null) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Sai email hoặc mật khẩu!");
+            redirectAttributes.addFlashAttribute("error", "Sai email hoặc mật khẩu!");
             return "redirect:/login";
         }
 
-        // Lưu thông tin người dùng vào Session
         session.setAttribute("loginUser", user);
 
-        // THÊM ĐOẠN ĐIỀU HƯỚNG THEO ROLE TẠI ĐÂY
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/admin"; // Chuyển sang Controller của Admin (Trang thống kê)
+            return "redirect:/admin";
         } else if ("ARTIST".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/artist/schedule"; // (Tùy chọn) Chuyển Artist về trang lịch làm việc
+            // Lưu đủ các key cần thiết để đồng bộ giữa các Controller
+            session.setAttribute("loginArtist", user);
+            session.setAttribute("artist", user);
+            return "redirect:/artist/bookings";
         }
 
-        // Mặc định là USER sẽ về trang chủ mua sắm / đặt lịch
         return "redirect:/";
     }
 

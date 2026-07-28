@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Sưu Tập Tác Phẩm | DUNG DORYS Makeup</title>
+
+    <!-- Bootstrap 5 CSS & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+        }
+        .gallery-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+        }
+        /* CẬP NHẬT CÁCH 1: Hiển thị 100% toàn diện ảnh, không bị cắt */
+        .gallery-img {
+            height: 320px;
+            object-fit: contain;
+            background-color: #f8f9fa; /* Màu nền nhẹ khi ảnh chưa phủ kín width/height */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR HEADER -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top py-3 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i>DUNG DORYS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Trang Chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-semibold text-danger" href="/gallery">Bộ Sưu Tập</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a href="/#services" class="btn btn-danger rounded-pill px-4 btn-sm">Đặt Lịch Ngay</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BANNER BỘ SƯU TẬP -->
+    <section class="bg-dark text-white text-center py-5 position-relative" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1920') center/cover;">
+        <div class="container py-4">
+            <h1 class="display-5 fw-bold mb-2">Bộ Sưu Tập Tác Phẩm</h1>
+            <p class="lead text-light opacity-75 mx-auto mb-4" style="max-width: 650px;">
+                Khám phá những phong cách trang điểm độc đáo được thực hiện bởi đội ngũ Makeup Artist chuyên nghiệp.
+            </p>
+
+            <!-- THANH TÌM KIẾM TÁC PHẨM -->
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-5">
+                    <form th:action="@{/gallery}" method="get" class="d-flex gap-2 bg-white p-2 rounded-pill shadow">
+                        <input type="text" name="keyword" class="form-control border-0 rounded-pill px-3 shadow-none" 
+                               placeholder="Tìm tone trang điểm, cô dâu, tiệc..." th:value="${keyword}">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DANH SÁCH TÁC PHẨM -->
+    <section class="container py-5">
+        <div class="row g-4" th:if="${not #lists.isEmpty(galleries)}">
+            <div class="col-md-6 col-lg-4" th:each="item : ${galleries}">
+                <div class="card gallery-card h-100 border-0 rounded-4 overflow-hidden shadow-sm bg-white">
+                    <img th:src="@{'/uploads/' + ${item.imageUrl}}" class="card-img-top gallery-img" alt="Artwork">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-2" th:text="${item.title}">Tên phong cách</h5>
+                            <p class="text-muted small mb-3" th:text="${item.description}">Mô tả phong cách makeup...</p>
+                        </div>
+                        <div class="pt-3 border-top d-flex align-items-center justify-content-between">
+                            <small class="text-secondary fw-semibold">
+                                <i class="fa-solid fa-user-ninja text-danger me-1"></i>
+                                <span th:text="${item.artist != null ? item.artist.fullName : 'DUNG DORYS'}">Artist</span>
+                            </small>
+                            <a href="/#services" class="btn btn-sm btn-outline-danger rounded-pill px-3">Đặt phong cách này</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Không có kết quả -->
+        <div class="text-center py-5" th:if="${#lists.isEmpty(galleries)}">
+            <i class="fa-regular fa-image fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="fw-semibold text-secondary">Chưa có tác phẩm nào phù hợp</h5>
+            <p class="text-muted small">Thử tìm kiếm với từ khóa khác hoặc quay lại sau nhé!</p>
+            <a href="/gallery" class="btn btn-outline-dark rounded-pill px-4 mt-2">Xem tất cả tác phẩm</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center py-4 border-top border-secondary">
+        <p class="small text-muted mb-0">&copy; DUNG DORYS Makeup. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
