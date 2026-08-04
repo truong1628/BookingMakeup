@@ -1,5 +1,6 @@
 package com.booking.bookingmakeup.controller.artist;
 
+import java.time.LocalDate;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import com.booking.bookingmakeup.entity.Booking;
 import com.booking.bookingmakeup.entity.MakeupArtist;
 import com.booking.bookingmakeup.service.BookingService;
 import com.booking.bookingmakeup.service.MakeupArtistService;
+import com.booking.bookingmakeup.service.ReviewService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -25,10 +27,14 @@ public class ArtistController {
 
     private final MakeupArtistService artistService;
     private final BookingService bookingService;
+    private final ReviewService reviewService;
 
-    public ArtistController(MakeupArtistService artistService, BookingService bookingService) {
+    public ArtistController(MakeupArtistService artistService, 
+                            BookingService bookingService, 
+                            ReviewService reviewService) {
         this.artistService = artistService;
         this.bookingService = bookingService;
+        this.reviewService = reviewService;
     }
 
     // Hàm lấy ID an toàn bất kể đăng nhập từ AuthController hay ArtistController
@@ -74,11 +80,73 @@ public class ArtistController {
         }
 
         session.setAttribute("loginArtist", artist);
-        return "redirect:/artist/bookings";
+        return "redirect:/artist/dashboard";
     }
 
-    // 👈 Đã thêm "/schedule" vào danh sách Mapping để bao quát toàn bộ URL
-    @GetMapping({"", "/dashboard", "/bookings", "/schedule"})
+    // 🟢 THÊM MỚI: Endpoint trang Dashboard dành cho Artist
+    @GetMapping({"", "/dashboard"})
+    public String dashboard(HttpSession session, Model model) {
+        Long artistId = getArtistIdFromSession(session);
+
+        if (artistId == null) {
+            return "redirect:/artist/login";
+        }
+
+        Object currentArtist = session.getAttribute("loginArtist");
+        if (currentArtist == null) currentArtist = session.getAttribute("artist");
+        if (currentArtist == null) currentArtist = session.getAttribute("loginUser");
+
+        List<Booking> bookings = bookingService.getBookingsByArtist(artistId);
+
+        // 1. Thống kê số lượng
+        long totalBookings = (bookings != null) ? bookings.size() : 0;
+        long completedBookings = 0;
+        long inProgressBookings = 0;
+        double monthRevenue = 0.0;
+
+        LocalDate now = LocalDate.now();
+
+        if (bookings != null) {
+            for (Booking booking : bookings) {
+                String status = booking.getStatus();
+                
+                // Đếm trạng thái
+                if ("COMPLETED".equalsIgnoreCase(status)) {
+                    completedBookings++;
+                    
+                    // Tính doanh thu tháng hiện tại cho đơn đã hoàn thành
+                   
+                    if (booking.getBookingDate() != null) {
+                        LocalDate bookingDate = booking.getBookingDate(); // Đã là LocalDate nên lấy trực tiếp
+                        if (bookingDate.getMonthValue() == now.getMonthValue() && bookingDate.getYear() == now.getYear()) {
+                            double price = (booking.getService() != null && booking.getService().getPrice() != null) 
+                                        ? booking.getService().getPrice() : 0.0;
+                            monthRevenue += price;
+                        }
+                    }
+                } else if ("CONFIRMED".equalsIgnoreCase(status) || "IN_PROGRESS".equalsIgnoreCase(status)) {
+                    inProgressBookings++;
+                }
+            }
+        }
+
+        // 2. Lấy điểm đánh giá trung bình
+        Double averageRating = reviewService.getAverageRatingByArtist(artistId);
+
+        model.addAttribute("artist", currentArtist);
+        model.addAttribute("totalBookings", totalBookings);
+        model.addAttribute("completedBookings", completedBookings);
+        model.addAttribute("inProgressBookings", inProgressBookings);
+        model.addAttribute("monthRevenue", monthRevenue);
+        model.addAttribute("averageRating", averageRating != null ? averageRating : 0.0);
+        
+        // Danh sách lịch đặt hiển thị ngắn gọn ở Dashboard
+        model.addAttribute("recentBookings", bookings);
+
+        return "artist/dashboard";
+    }
+
+    @GetMapping("/bookings")
     public String showArtistBookings(HttpSession session, Model model) {
         Long artistId = getArtistIdFromSession(session);
 
@@ -92,10 +160,27 @@ public class ArtistController {
 
         List<Booking> bookings = bookingService.getBookingsByArtist(artistId);
 
+        // CẬP NHẬT: Tính toán số tiền còn lại Artist cần thu khách
+        if (bookings != null) {
+            for (Booking booking : bookings) {
+                double totalPrice = (booking.getService() != null && booking.getService().getPrice() != null) 
+                                    ? booking.getService().getPrice() : 0.0;
+                double deposit = (booking.getDepositAmount() != null) ? booking.getDepositAmount() : 0.0;
+
+                // Nếu khách đã cọc thành công (PAID) -> Trừ tiền cọc ra
+                if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
+                    booking.setRemainingAmount(Math.max(0.0, totalPrice - deposit));
+                } else {
+                    // Nếu chưa cọc hoặc chưa duyệt cọc -> Thu 100% giá trị dịch vụ
+                    booking.setRemainingAmount(totalPrice);
+                }
+            }
+        }
+
         model.addAttribute("bookings", bookings);
         model.addAttribute("artist", currentArtist);
 
-        return "artist/bookings";
+        return "artist/bookings"; 
     }
 
     @PutMapping("/bookings/{id}/start")

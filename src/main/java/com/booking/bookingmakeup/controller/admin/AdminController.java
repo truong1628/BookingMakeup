@@ -62,11 +62,16 @@ public class AdminController {
         model.addAttribute("completedBookings", bookingService.countCompleted());
         model.addAttribute("cancelledBookings", bookingService.countCancelled());
 
-        // 3. BỔ SUNG: Truyền danh sách Booking sang giao diện để hiển thị trên bảng (Table)
-        model.addAttribute("bookings", bookingService.getAllBookings()); // Kiểm tra lại tên phương thức trong BookingService của bạn (ví dụ: findAll() hoặc getAllBookings())
-        model.addAttribute(
-        "artistRevenue",
-        bookingService.getArtistRevenue());
+        // 3. Thống kê Doanh thu (Hôm nay, Tháng này, Năm nay, Tổng)
+        model.addAttribute("todayRevenue", bookingService.getTodayRevenue());
+        model.addAttribute("monthRevenue", bookingService.getMonthRevenue());
+        model.addAttribute("yearRevenue", bookingService.getYearRevenue());
+        model.addAttribute("totalRevenue", bookingService.getTotalRevenue());
+
+        // 4. Danh sách Booking & Doanh thu theo Artist
+        model.addAttribute("bookings", bookingService.getAllBookings());
+        model.addAttribute("artistRevenue", bookingService.getArtistRevenue());
+
         return "admin/admin";
     }
 }

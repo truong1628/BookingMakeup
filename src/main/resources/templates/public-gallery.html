@@ -23,41 +23,17 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
         }
-        /* CẬP NHẬT CÁCH 1: Hiển thị 100% toàn diện ảnh, không bị cắt */
         .gallery-img {
             height: 320px;
             object-fit: contain;
-            background-color: #f8f9fa; /* Màu nền nhẹ khi ảnh chưa phủ kín width/height */
+            background-color: #f8f9fa; 
         }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR HEADER -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top py-3 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i>DUNG DORYS
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Trang Chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active fw-semibold text-danger" href="/gallery">Bộ Sưu Tập</a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a href="/#services" class="btn btn-danger rounded-pill px-4 btn-sm">Đặt Lịch Ngay</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/user-navbar :: userNavbar('gallery')}"></div>
 
     <!-- BANNER BỘ SƯU TẬP -->
     <section class="bg-dark text-white text-center py-5 position-relative" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1920') center/cover;">

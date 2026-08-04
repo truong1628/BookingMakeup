@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="artistNavbar(activeMenu)" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold text-uppercase" th:href="@{/artist/dashboard}">
+                <i class="fa-solid fa-palette me-2"></i>DUNG DORYS ARTIST
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#artistNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="artistNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}" th:href="@{/artist/dashboard}">
+                            <i class="fa-solid fa-chart-line me-1"></i> Trang chủ & Thống kê
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activeMenu == 'bookings' ? 'active' : ''}" th:href="@{/artist/bookings}">
+                            <i class="fa-regular fa-calendar-check me-1"></i> Lịch nhận Makeup
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${activeMenu == 'gallery' ? 'active' : ''}" th:href="@{/artist/gallery-manage}">
+                            <i class="fa-regular fa-id-card me-1"></i> Tác phẩm của tôi
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center text-white">
+                    <span class="me-3">
+                        <i class="fa-regular fa-user me-1"></i>
+                        <span th:text="${artist != null ? artist.fullName : 'Artist'}">Artist</span>
+                    </span>
+                    <a th:href="@{/logout}" class="btn btn-outline-light btn-sm">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

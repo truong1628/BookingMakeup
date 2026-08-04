@@ -57,5 +57,10 @@ public class ReviewService {
     public long countReviews() {
         return reviewRepository.count();
     }
+    
+    public Double getAverageRatingByArtist(Long artistId) {
+        Double avgRating = reviewRepository.getAverageRatingByArtistId(artistId);
+        return avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : 0.0; // Làm tròn 1 chữ số thập phân (ví dụ: 4.8)
+    }
         
 }

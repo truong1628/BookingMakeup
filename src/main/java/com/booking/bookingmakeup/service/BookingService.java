@@ -10,6 +10,7 @@ import com.booking.bookingmakeup.entity.Booking;
 import com.booking.bookingmakeup.entity.MakeupArtist;
 import com.booking.bookingmakeup.entity.User;
 import com.booking.bookingmakeup.repository.BookingRepository;
+
 @Service
 public class BookingService {
 
@@ -36,6 +37,29 @@ public class BookingService {
         return bookingRepository.findById(id).orElse(null);
     }
 
+    // --- CÁC HÀM XỬ LÝ THANH TOÁN (MỚI THÊM) ---
+
+    // Cập nhật trạng thái thanh toán (UNPAID -> PENDING_APPROVAL -> PAID)
+    public void updatePaymentStatus(Long bookingId, String paymentStatus) {
+        Booking booking = getBookingById(bookingId);
+        if (booking != null) {
+            booking.setPaymentStatus(paymentStatus);
+            bookingRepository.save(booking);
+        }
+    }
+
+    // Cập nhật thông tin thanh toán đầy đủ
+    public void updatePaymentInfo(Long bookingId, String paymentType, Double depositAmount, String paymentStatus) {
+        Booking booking = getBookingById(bookingId);
+        if (booking != null) {
+            booking.setPaymentType(paymentType);
+            booking.setDepositAmount(depositAmount);
+            booking.setPaymentStatus(paymentStatus);
+            bookingRepository.save(booking);
+        }
+    }
+
+
     // User hủy lịch
     public void cancelBooking(Long id, User user) {
 
@@ -56,8 +80,7 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-
- // Admin hủy
+    // Admin hủy
     public void adminCancelBooking(Long id) {
 
         Booking booking = getBookingById(id);
@@ -66,7 +89,7 @@ public class BookingService {
             return;
         }
 
-       if ("CANCELLED".equals(booking.getStatus())) {
+        if ("CANCELLED".equals(booking.getStatus())) {
             return;
         }
 
@@ -95,10 +118,10 @@ public class BookingService {
                 artist,
                 date);
     }
+
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
-
 
     public void confirmBooking(Long id) {
 
@@ -122,7 +145,6 @@ public class BookingService {
 
         bookingRepository.save(booking);
     }
-   
     
     public long countAll() {
          return bookingRepository.count();
@@ -143,6 +165,7 @@ public class BookingService {
     public long countCancelled() {
         return bookingRepository.countByStatus("CANCELLED");
     }
+
     public List<Booking> getBookingsByArtist(Long artistId) {
 
         return bookingRepository
@@ -158,6 +181,7 @@ public class BookingService {
 
         bookingRepository.save(booking);
     }
+
     public void finishBooking(Long id) {
 
         Booking booking = getBookingById(id);
@@ -169,47 +193,47 @@ public class BookingService {
 
     public void assignArtist(Long bookingId, Long artistId) {
 
-    Booking booking = getBookingById(bookingId);
+        Booking booking = getBookingById(bookingId);
 
-    if (booking == null) {
-        return;
+        if (booking == null) {
+            return;
+        }
+
+        MakeupArtist artist = artistService.getById(artistId);
+
+        if (artist == null) {
+            return;
+        }
+
+        // Kiểm tra artist có bận không
+        if (bookingRepository.existsByArtistAndBookingDateAndBookingTimeAndIdNot(
+                artist,
+                booking.getBookingDate(),
+                booking.getBookingTime(),
+                booking.getId())) {
+
+            throw new RuntimeException("Makeup Artist đã có lịch.");
+        }
+
+        booking.setArtist(artist);
+
+        bookingRepository.save(booking);
     }
 
-    MakeupArtist artist = artistService.getById(artistId);
-
-    if (artist == null) {
-        return;
-    }
-
-    // Kiểm tra artist có bận không
-    if (bookingRepository.existsByArtistAndBookingDateAndBookingTimeAndIdNot(
-            artist,
-            booking.getBookingDate(),
-            booking.getBookingTime(),
-            booking.getId())) {
-
-        throw new RuntimeException("Makeup Artist đã có lịch.");
-    }
-
-    booking.setArtist(artist);
-
-    bookingRepository.save(booking);
-}
-// Thêm hàm này để đồng bộ với AdminBookingController
     public void completeBooking(Long id) {
         Booking booking = getBookingById(id);
         if (booking == null) {
             return;
         }
         
-        // Cập nhật trạng thái thành chữ "COMPLETED" viết hoa chữ đầu giống logic check ở HTML của bạn
         booking.setStatus("COMPLETED");
         bookingRepository.save(booking);
     }
-    // Trong BookingService.java
+
     public List<Booking> getBookingsByArtistId(Long artistId) {
         return bookingRepository.findByArtistIdOrderByIdDesc(artistId);
     }
+
     public void requestCancelBooking(Long bookingId, String reason) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
@@ -218,8 +242,6 @@ public class BookingService {
         booking.setCancelReason(reason);
         bookingRepository.save(booking);
     }
-
-    // Trong BookingService.java
 
     public void approveCancelBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -240,5 +262,24 @@ public class BookingService {
     public List<Object[]> getArtistRevenue() {
         return bookingRepository.getArtistRevenue();
     }
-    
+    public Double getTodayRevenue() {
+        Double revenue = bookingRepository.getRevenueByDate(LocalDate.now());
+        return revenue != null ? revenue : 0.0;
+    }
+
+    public Double getMonthRevenue() {
+        LocalDate now = LocalDate.now();
+        Double revenue = bookingRepository.getRevenueByMonthAndYear(now.getMonthValue(), now.getYear());
+        return revenue != null ? revenue : 0.0;
+    }
+
+    public Double getYearRevenue() {
+        Double revenue = bookingRepository.getRevenueByYear(LocalDate.now().getYear());
+        return revenue != null ? revenue : 0.0;
+    }
+
+    public Double getTotalRevenue() {
+        Double revenue = bookingRepository.getTotalRevenue();
+        return revenue != null ? revenue : 0.0;
+    }
 }

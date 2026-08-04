@@ -4,421 +4,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt lịch Makeup</title>
-    
-    <!-- Mapbox CSS -->
+    <title>Đặt lịch Makeup | DUNG DORYS</title>
+
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.0/mapbox-gl.css" rel="stylesheet">
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
-    <div class="container">
-        <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
-            <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i> 
-            <span style="letter-spacing: 1px;">DUNG DORYS</span>
-        </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i>
+                <span style="letter-spacing: 1px;">DUNG DORYS</span>
+            </a>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto ms-lg-4">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">
-                        <i class="fa-solid fa-house me-1"></i> Trang chủ
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#services">
-                        <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/gallery">
-                        <i class="fa-solid fa-images me-1"></i> Bộ Sưu Tập
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#why-us">
-                        <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">
-                        <i class="fa-solid fa-envelope me-1"></i> Liên hệ
-                    </a>
-                </li>
-        
-            </ul>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-            <!-- Chưa đăng nhập -->
-            <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
-                <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
-                    <i class="fa-regular fa-user me-1"></i> Đăng nhập
-                </a>
-                <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
-                    <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
-                </a>
-            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">
+                            <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gallery">
+                            <i class="fa-solid fa-images me-1"></i> Bộ Sưu Tập
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#why-us">
+                            <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">
+                            <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </li>
+                </ul>
 
-            <!-- Đã đăng nhập -->
-            <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
-                <div class="text-white">
-                    <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
-                    <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
+                <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
+                    <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fa-regular fa-user me-1"></i> Đăng nhập
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
+                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                    </a>
                 </div>
 
-                <!-- Role USER -->
-                <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                    <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
-                </a>
-
-                <a href="/logout" class="btn btn-sm btn-danger rounded-circle p-2" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?');" title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-power-off"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card shadow border-0">
-                <div class="card-header bg-danger text-white text-center py-3">
-                    <h3 class="m-0 fw-bold">
-                        <i class="fa-regular fa-calendar-plus me-2"></i>Đặt lịch Makeup
-                    </h3>
-                </div>
-
-                <div class="card-body">
-                    <!-- Thông tin dịch vụ -->
-                    <div class="mb-4">
-                        <img th:src="@{'/uploads/' + ${service.image}}"
-                             class="img-fluid rounded mb-3 shadow-sm"
-                             style="max-height:300px; width:100%; object-fit:cover;"
-                             alt="Ảnh dịch vụ">
-
-                        <h4 class="fw-bold" th:text="${service.serviceName}">Tên dịch vụ</h4>
-
-                        <p class="mb-1">
-                            <i class="fa-solid fa-tag text-danger me-2"></i><strong>Giá dịch vụ:</strong>
-                            <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')}">0</span> VNĐ
-                        </p>
-
-                        <p class="mb-1">
-                            <i class="fa-regular fa-clock text-primary me-2"></i><strong>Thời gian thực hiện:</strong>
-                            <span th:text="${service.duration}">0</span> phút
-                        </p>
-
-                        <p class="text-muted mt-2" th:text="${service.description}"></p>
+                <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                    <div class="text-white">
+                        <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
+                        <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
                     </div>
 
-                    <hr>
+                    <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                        <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
+                    </a>
 
-                    <!-- Form đặt lịch -->
-                    <form th:action="@{/booking}" th:object="${booking}" method="post">
+                    <a href="/logout" class="btn btn-sm btn-danger rounded-circle p-2" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?');" title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-                        <!-- Hidden fields -->
-                        <input type="hidden" name="serviceId" th:value="${service.id}">
-                        <input type="hidden" id="distanceKm" name="distanceKm" value="0">
-                        <input type="hidden" id="extraFee" name="extraFee" value="0">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow border-0 rounded-4">
+                    <div class="card-header bg-danger text-white text-center py-3 rounded-top-4">
+                        <h3 class="m-0 fw-bold">
+                            <i class="fa-regular fa-calendar-plus me-2"></i>Đặt lịch Makeup
+                        </h3>
+                    </div>
 
-                        <!-- Chọn địa điểm -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                <i class="fa-solid fa-location-dot me-1 text-danger"></i>Địa điểm Makeup
-                            </label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" th:field="*{locationType}" value="STUDIO" id="studio">
-                                <label class="form-check-label" for="studio">
-                                    <i class="fa-solid fa-store me-1 text-muted"></i>Đến Studio (43 Trung Kính)
-                                </label>
-                            </div>
+                    <div class="card-body p-4">
+                        
+                        <div class="mb-4">
+                            <img th:src="@{'/uploads/' + ${service.image}}"
+                                 class="img-fluid rounded mb-3 shadow-sm"
+                                 style="max-height:300px; width:100%; object-fit:cover;"
+                                 alt="Ảnh dịch vụ">
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" th:field="*{locationType}" value="HOME" id="home">
-                                <label class="form-check-label" for="home">
-                                    <i class="fa-solid fa-house-chimney me-1 text-muted"></i>Makeup tại nhà
-                                </label>
-                            </div>
+                            <h4 class="fw-bold" th:text="${service.serviceName}">Tên dịch vụ</h4>
+
+                            <p class="mb-1">
+                                <i class="fa-solid fa-tag text-danger me-2"></i><strong>Giá dịch vụ:</strong>
+                                <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')}">0</span> VNĐ
+                            </p>
+
+                            <p class="mb-1">
+                                <i class="fa-regular fa-clock text-primary me-2"></i><strong>Thời gian thực hiện:</strong>
+                                <span th:text="${service.duration}">0</span> phút
+                            </p>
+
+                            <p class="text-muted mt-2" th:text="${service.description}"></p>
                         </div>
 
-                        <!-- Khối nhập địa chỉ & Bản đồ (Chỉ hiện khi chọn HOME) -->
-                        <div id="addressBox" style="display:none;" class="mb-3">
-                            <label class="form-label fw-bold">Địa chỉ Makeup tại nhà</label>
+                        <hr>
 
-                            <!-- Tìm kiếm gợi ý -->
-                            <div class="position-relative mb-2">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                    <input id="searchAddress" class="form-control border-start-0" placeholder="Tìm kiếm địa chỉ nhanh..." type="text">
+                        <form th:action="@{/booking}" th:object="${booking}" method="post">
+
+                            <input type="hidden" name="serviceId" th:value="${service.id}">
+                            <input type="hidden" id="distanceKm" name="distanceKm" value="0">
+                            <input type="hidden" id="extraFee" name="extraFee" value="0">
+
+                            <!-- Địa điểm Makeup -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fa-solid fa-location-dot me-1 text-danger"></i>Địa điểm Makeup
+                                </label>
+                                <div class="form-check p-2 border rounded mb-2">
+                                    <input class="form-check-input ms-1" type="radio" th:field="*{locationType}" value="STUDIO" id="studio">
+                                    <label class="form-check-label fw-semibold ms-2" for="studio">
+                                        <i class="fa-solid fa-store me-1 text-primary"></i>Đến Studio (43 Trung Kính)
+                                    </label>
                                 </div>
-                                <div id="searchResult" class="list-group shadow-sm"></div>
+
+                                <div class="form-check p-2 border rounded">
+                                    <input class="form-check-input ms-1" type="radio" th:field="*{locationType}" value="HOME" id="home">
+                                    <label class="form-check-label fw-semibold ms-2" for="home">
+                                        <i class="fa-solid fa-house-chimney me-1 text-success"></i>Makeup tại nhà
+                                    </label>
+                                </div>
                             </div>
 
-                            <!-- Nhập/Hiển thị địa chỉ chi tiết -->
-                            <textarea class="form-control mb-2" rows="2" th:field="*{address}" placeholder="Số nhà, tên đường, phường/xã..."></textarea>
-                            <div class="text-danger small mb-2" th:if="${addressError}" th:text="${addressError}"></div>
+                            <!-- KHUNG ĐỊA CHỈ & BẢN ĐỒ & THANH TOÁN CỌC (Chỉ hiển thị khi chọn HOME) -->
+                            <div id="addressBox" style="display:none;" class="mb-3 p-3 bg-light rounded border">
+                                <label class="form-label fw-bold">Địa chỉ Makeup tại nhà <span class="text-danger">*</span></label>
 
-                            <!-- Bản đồ chọn vị trí -->
-                            <div class="mt-3">
-                                <label class="form-label small text-muted">Hoặc ghim vị trí chính xác trên bản đồ:</label>
-                                <div id="map" style="width:100%; height:320px; border-radius:8px; border:1px solid #ccc;"></div>
+                                <div class="position-relative mb-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                        <input id="searchAddress" class="form-control border-start-0" placeholder="Tìm kiếm địa chỉ nhanh..." type="text">
+                                    </div>
+                                    <div id="searchResult" class="list-group shadow-sm position-absolute w-100 z-3"></div>
+                                </div>
+
+                                <textarea class="form-control mb-2" rows="2" th:field="*{address}" placeholder="Số nhà, tên đường, phường/xã..."></textarea>
+                                <div class="text-danger small mb-2" th:if="${addressError}" th:text="${addressError}"></div>
+
+                                <div class="mt-3">
+                                    <label class="form-label small text-muted">Hoặc ghim vị trí chính xác trên bản đồ:</label>
+                                    <div id="map" style="width:100%; height:320px; border-radius:8px; border:1px solid #ccc;"></div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border mt-3">
+                                    <div><i class="fa-solid fa-route me-2 text-primary"></i>Khoảng cách: <b id="distanceText">0 km</b></div>
+                                    <div><i class="fa-solid fa-coins me-2 text-warning"></i>Phụ phí di chuyển: <b class="text-danger" id="feeText">0 VNĐ</b></div>
+                                </div>
+
+                                <!-- BỔ SUNG: KHUNG CHỌN HÌNH THỨC THANH TOÁN KHI TẠI NHÀ -->
+                                <div class="mt-3 pt-3 border-top">
+                                    <label class="form-label fw-bold text-dark">
+                                        <i class="fa-solid fa-credit-card me-1 text-danger"></i>Hình thức thanh toán cọc <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <div class="form-check border p-2 rounded bg-white">
+                                                <input class="form-check-input ms-1" type="radio" th:field="*{paymentType}" id="payDeposit" value="DEPOSIT" checked>
+                                                <label class="form-check-label fw-semibold ms-2" for="payDeposit">
+                                                    Cọc 30% tổng tiền
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check border p-2 rounded bg-white">
+                                                <input class="form-check-input ms-1" type="radio" th:field="*{paymentType}" id="payFull" value="FULL">
+                                                <label class="form-check-label fw-semibold ms-2" for="payFull">
+                                                    Thanh toán 100%
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Tính toán chi phí -->
-                            <div class="bg-light p-3 rounded border mt-3">
-                                <div><i class="fa-solid fa-route me-2 text-primary"></i>Khoảng cách: <b id="distanceText">0 km</b></div>
-                                <div><i class="fa-solid fa-coins me-2 text-warning"></i>Phụ phí di chuyển: <b class="text-danger" id="feeText">0 VNĐ</b></div>
-                            </div>
-                        </div>
-
-                        <!-- Số điện thoại -->
-                        <div class="mb-3" id="phoneBox">
-                            <label class="form-label fw-bold">
-                                <i class="fa-solid fa-phone me-1 text-success"></i>Số điện thoại liên hệ
-                            </label>
-                            <input type="tel" class="form-control" th:field="*{phone}" placeholder="Nhập số điện thoại..." required>
-                            <div class="text-danger small" th:if="${phoneError}" th:text="${phoneError}"></div>
-                        </div>
-
-                        <!-- Ghi chú -->
-                        <div class="mb-3" id="noteBox">
-                            <label class="form-label fw-bold">
-                                <i class="fa-regular fa-note-sticky me-1 text-warning"></i>Ghi chú thêm
-                            </label>
-                            <textarea class="form-control" rows="2" th:field="*{note}" placeholder="Yêu cầu đặc biệt (nếu có)..."></textarea>
-                        </div>
-
-                        <!-- Ngày & Giờ đặt -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <!-- Số điện thoại -->
+                            <div class="mb-3" id="phoneBox">
                                 <label class="form-label fw-bold">
-                                    <i class="fa-regular fa-calendar me-1"></i>Ngày đặt
+                                    <i class="fa-solid fa-phone me-1 text-success"></i>Số điện thoại liên hệ <span class="text-danger">*</span>
                                 </label>
-                                <input id="bookingDate" type="date" class="form-control" th:field="*{bookingDate}" th:min="${today}" required>
-                                <div class="text-danger small" th:if="${#fields.hasErrors('bookingDate')}" th:errors="*{bookingDate}"></div>
+                                <input type="tel" class="form-control" th:field="*{phone}" placeholder="Nhập số điện thoại..." required>
+                                <div class="text-danger small" th:if="${phoneError}" th:text="${phoneError}"></div>
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <!-- Ghi chú -->
+                            <div class="mb-3" id="noteBox">
                                 <label class="form-label fw-bold">
-                                    <i class="fa-regular fa-clock me-1"></i>Giờ đặt
+                                    <i class="fa-regular fa-note-sticky me-1 text-warning"></i>Ghi chú thêm
                                 </label>
-                                <select class="form-select" th:field="*{bookingTime}" required>
-                                    <option value="">-- Chọn giờ --</option>
-                                    <option th:each="time : ${timeSlots}" th:value="${time}" th:text="${time}"></option>
-                                </select>
-                                <div class="text-danger small" th:if="${#fields.hasErrors('bookingTime')}" th:errors="*{bookingTime}"></div>
+                                <textarea class="form-control" rows="2" th:field="*{note}" placeholder="Yêu cầu đặc biệt (nếu có)..."></textarea>
                             </div>
-                        </div>
 
-                        <!-- Tổng tiền thanh toán -->
-                        <div class="alert alert-info d-flex justify-content-between align-items-center my-3">
-                            <span class="fw-bold"><i class="fa-solid fa-receipt me-2"></i>TỔNG TIỀN THANH TOÁN:</span>
-                            <h4 class="m-0 text-danger font-weight-bold" id="totalPrice">0 VNĐ</h4>
-                        </div>
+                            <!-- Ngày & Giờ đặt -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fa-regular fa-calendar me-1"></i>Ngày đặt <span class="text-danger">*</span>
+                                    </label>
+                                    <input id="bookingDate" type="date" class="form-control" th:field="*{bookingDate}" th:min="${today}" required>
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('bookingDate')}" th:errors="*{bookingDate}"></div>
+                                </div>
 
-                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold">
-                            <i class="fa-solid fa-check-circle me-2"></i>Xác Nhận Đặt Lịch
-                        </button>
-                    </form>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fa-regular fa-clock me-1"></i>Giờ đặt <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" th:field="*{bookingTime}" required>
+                                        <option value="">-- Chọn giờ --</option>
+                                        <option th:each="time : ${timeSlots}" th:value="${time}" th:text="${time}"></option>
+                                    </select>
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('bookingTime')}" th:errors="*{bookingTime}"></div>
+                                </div>
+                            </div>
+
+                            <!-- TỔNG TIỀN DỰ KIẾN -->
+                            <div class="alert alert-info d-flex justify-content-between align-items-center my-3">
+                                <span class="fw-bold"><i class="fa-solid fa-receipt me-2"></i>TỔNG TIỀN DỊCH VỤ:</span>
+                                <h4 class="m-0 text-danger font-weight-bold" id="totalPrice">0 VNĐ</h4>
+                            </div>
+                            <!-- KHUNG HIỂN THỊ MÃ QR CHUYỂN KHOẢN -->
+                            <div class="card border-danger mb-4 shadow-sm" id="qrContainer" style="display: none;">
+                                <div class="card-header bg-danger text-white fw-bold">
+                                    <i class="fa-solid fa-qrcode me-2"></i>Quét mã QR để thanh toán
+                                </div>
+                                <div class="card-body text-center">
+                                    <p class="text-muted small mb-2">Vui lòng quét mã QR bên dưới bằng ứng dụng ngân hàng để chuyển khoản đúng số tiền.</p>
+                                    
+                                    <!-- Ảnh QR code tự động generate từ VietQR -->
+                                    <div class="p-2 bg-white d-inline-block border rounded shadow-sm">
+                                        <img id="vietQRImg" src="" alt="Mã QR Chuyển Khoản" class="img-fluid" style="max-width: 220px; height: auto;">
+                                    </div>
+
+                                    <div class="mt-3 text-start bg-light p-3 rounded small">
+                                        <div><strong>Ngân hàng:</strong> MB Bank (Quân Đội)</div>
+                                        <div><strong>Số tài khoản:</strong> <span class="text-danger fw-bold">0351234567</span> (Thay số của bạn)</div>
+                                        <div><strong>Chủ tài khoản:</strong> NGUYEN THI DUNG</div>
+                                        <div><strong>Số tiền cần chuyển:</strong> <span class="text-danger fw-bold" id="qrAmountText">0 VNĐ</span></div>
+                                        <div><strong>Nội dung CK:</strong> <span class="text-primary fw-bold" id="qrNoteText">DUNG DORYS DAT LICH</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold rounded-pill shadow-sm">
+                                <i class="fa-solid fa-check-circle me-2"></i>Xác Nhận Đặt Lịch
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Scripts giữ nguyên -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.5.0/mapbox-gl.js"></script>
-
-<script th:inline="javascript">
-    const token = "pk.eyJ1IjoibnZ0MjkwNjIwMDUiLCJhIjoiY21zMzE0bHdhMWNvNTJ3cG1seHhwd3VoeiJ9.3ymS4xHPOHOT2etqRtT39Q";
-    mapboxgl.accessToken = token;
-
-    const studioAddress = "43 Trung Kính, Trung Hòa, Cầu Giấy, Hà Nội";
-    const studioLng = 105.8008;
-    const studioLat = 21.0207;
-    const servicePrice = Number(/*[[${service.price}]]*/ 0);
-
-    const studioRadio = document.getElementById("studio");
-    const homeRadio = document.getElementById("home");
-    const addressBox = document.getElementById("addressBox");
-
-    // Khởi tạo Map
-    const map = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/streets-v12",
-        center: [studioLng, studioLat],
-        zoom: 13
-    });
-
-    // Marker Studio
-    new mapboxgl.Marker({ color: "red" })
-        .setLngLat([studioLng, studioLat])
-        .setPopup(new mapboxgl.Popup().setHTML("<b>Studio Makeup</b><br>43 Trung Kính"))
-        .addTo(map);
-
-    // Marker Khách hàng
-    let customerMarker = new mapboxgl.Marker({ color: "blue", draggable: true });
-
-    customerMarker.on('dragend', async () => {
-        const lngLat = customerMarker.getLngLat();
-        await updateAddressFromCoordinate(lngLat.lng, lngLat.lat);
-        calculateDistanceByCoordinate(lngLat.lng, lngLat.lat);
-    });
-
-    function toggleAddress() {
-        if (homeRadio.checked) {
-            addressBox.style.display = "block";
-            setTimeout(() => map.resize(), 200);
-        } else {
-            addressBox.style.display = "none";
-            updateFee(0);
-        }
-    }
-
-    studioRadio.addEventListener("change", toggleAddress);
-    homeRadio.addEventListener("change", toggleAddress);
-    toggleAddress();
-
-    map.on("click", async function (e) {
-        if (!homeRadio.checked) return;
-        const { lng, lat } = e.lngLat;
-        customerMarker.setLngLat([lng, lat]).addTo(map);
-        await updateAddressFromCoordinate(lng, lat);
-        calculateDistanceByCoordinate(lng, lat);
-    });
-
-    async function updateAddressFromCoordinate(lng, lat) {
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${token}&language=vi`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.features && data.features.length > 0) {
-                document.querySelector("[name='address']").value = data.features[0].place_name;
-            }
-        } catch (err) {
-            console.error("Lỗi lấy địa chỉ từ tọa độ:", err);
-        }
-    }
-
-    async function calculateDistanceByCoordinate(lng, lat) {
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${studioLng},${studioLat};${lng},${lat}?access_token=${token}`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (!data.routes || data.routes.length === 0) {
-                alert("Không tính được đường đi đến vị trí này.");
-                return;
-            }
-            const distanceKm = data.routes[0].distance / 1000;
-            updateFee(distanceKm);
-        } catch (err) {
-            console.error("Lỗi tính khoảng cách:", err);
-        }
-    }
-
-    document.querySelector("[name='address']").addEventListener("blur", async function () {
-        const address = this.value.trim();
-        if (!address) return;
-
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${token}&language=vi`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.features && data.features.length > 0) {
-                const [lng, lat] = data.features[0].center;
-                customerMarker.setLngLat([lng, lat]).addTo(map);
-                map.flyTo({ center: [lng, lat], zoom: 14 });
-                calculateDistanceByCoordinate(lng, lat);
-            }
-        } catch (err) {
-            console.error("Lỗi chuyển đổi địa chỉ:", err);
-        }
-    });
-
-    let searchTimeout;
-    document.getElementById("searchAddress").addEventListener("input", function () {
-        clearTimeout(searchTimeout);
-        const keyword = this.value.trim();
-        if (keyword.length < 3) {
-            document.getElementById("searchResult").innerHTML = "";
-            return;
-        }
-        searchTimeout = setTimeout(() => searchPlace(keyword), 300);
-    });
-
-    async function searchPlace(keyword) {
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(keyword)}.json?access_token=${token}&language=vi&country=vn&limit=5`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            showResult(data.features || []);
-        } catch (err) {
-            console.error("Lỗi tìm kiếm địa chỉ:", err);
-        }
-    }
-
-    function showResult(features) {
-        const box = document.getElementById("searchResult");
-        box.innerHTML = "";
-        features.forEach(place => {
-            const item = document.createElement("button");
-            item.type = "button";
-            item.className = "list-group-item list-group-item-action text-start";
-            item.innerHTML = place.place_name;
-            item.onclick = function () {
-                selectPlace(place);
-            };
-            box.appendChild(item);
-        });
-    }
-
-    function selectPlace(place) {
-        document.querySelector("[name='address']").value = place.place_name;
-        document.getElementById("searchAddress").value = "";
-        document.getElementById("searchResult").innerHTML = "";
-
-        const [lng, lat] = place.center;
-        customerMarker.setLngLat([lng, lat]).addTo(map);
-        map.flyTo({ center: [lng, lat], zoom: 14 });
-        calculateDistanceByCoordinate(lng, lat);
-    }
-
-    function updateFee(distance) {
-        document.getElementById("distanceText").innerText = distance.toFixed(1) + " km";
-
-        let fee = 0;
-        if (distance === 0) {
-            fee = 0;
-        } else if (distance <= 10) {
-            fee = 0;
-        } else if (distance <= 20) {
-            fee = 100000;
-        } else if (distance <= 100) {
-            fee = 200000;
-        } else if (distance <= 200) {
-            fee = 300000;
-        } else {
-            alert("Xin lỗi, studio chỉ hỗ trợ phục vụ tận nơi trong phạm vi 200 km.");
-            document.getElementById("feeText").innerText = "Không hỗ trợ";
-            document.getElementById("totalPrice").innerText = "---";
-            return;
-        }
-
-        document.getElementById("feeText").innerText = fee.toLocaleString("vi-VN") + " VNĐ";
-        document.getElementById("distanceKm").value = distance.toFixed(2);
-        document.getElementById("extraFee").value = fee;
-        document.getElementById("totalPrice").innerText = (servicePrice + fee).toLocaleString("vi-VN") + " VNĐ";
-    }
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.0/mapbox-gl.js"></script>
+    <script th:inline="javascript"> 
+        window.SERVICE_PRICE = Number(/*[[${service.price}]]*/ 0);
+    </script>
+    <script th:src="@{/js/booking-map.js}"></script>
 </body>
 </html>

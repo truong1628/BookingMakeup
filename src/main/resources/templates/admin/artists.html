@@ -13,66 +13,7 @@
     <link rel="stylesheet" th:href="@{/css/admin-style.css}">
 </head>
 <body>
-
-<!-- TOP NAVBAR HỆ THỐNG (MENU NGANG) -->
-<nav class="navbar navbar-expand-lg navbar-dark admin-navbar sticky-top">
-    <div class="container-fluid px-4">
-        <!-- Thương hiệu / Logo -->
-        <a class="navbar-brand me-4" th:href="@{/admin}">
-            DUNG DORYS ADMIN
-        </a>
-
-        <!-- Nút Toggle cho màn hình nhỏ (Mobile) -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarContent" 
-                aria-controls="adminNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Các mục Menu Ngang -->
-        <div class="collapse navbar-collapse" id="adminNavbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-                <!-- 1. TRANG CHỦ / THỐNG KÊ -->
-                <li class="nav-item">
-                    <a th:href="@{/admin}" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Trang chủ & Thống kê</span>
-                    </a>
-                </li>
-
-                <!-- 2. QUẢN LÝ BOOKING -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/bookings}" class="nav-link">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Quản lý Đặt lịch</span>
-                    </a>
-                </li>
-
-                <!-- 3. QUẢN LÝ DỊCH VỤ -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/services}" class="nav-link">
-                        <i class="fas fa-concierge-bell"></i>
-                        <span>Quản lý Dịch vụ</span>
-                    </a>
-                </li>
-
-                <!-- 🟢 4. QUẢN LÝ ARTIST (ACTIVE) -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/artists}" class="nav-link active">
-                        <i class="fas fa-user-tie"></i>
-                        <span>Quản lý Artist</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Nút đăng xuất -->
-            <div class="d-flex align-items-center gap-2">
-                <a th:href="@{/logout}" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="fas fa-sign-out-alt me-1"></i> Đăng xuất
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/admin-navbar :: adminNavbar('artists')}"></div>
 
 <!-- NỘI DUNG CHÍNH (MAIN CONTENT) -->
 <div class="container-fluid px-4 main-content">

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Artist - DUNG DORYS</title>
+    
+    <!-- Bootstrap 5 CSS & FontAwesome Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/artist-navbar :: artistNavbar('dashboard')}"></div>
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Dashboard Artist</h3>
+            <p class="text-muted mb-0">Thống kê hiệu suất công việc và lịch trình makeup của bạn</p>
+        </div>
+    </div>
+
+    <!-- HÀNG THỐNG KÊ CHỈ SỐ ARTIST -->
+    <div class="row g-3 mb-4">
+        <!-- 1. TỔNG BOOKING -->
+        <div class="col-12 col-sm-6 col-xl-2-4" style="flex: 0 0 auto; width: 20%;">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-primary">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Tổng Booking</span>
+                            <h3 class="mb-0 fw-bold text-primary mt-1" th:text="${totalBookings}">0</h3>
+                        </div>
+                        <div class="bg-primary-subtle p-3 rounded-circle text-primary">
+                            <i class="bi bi-calendar-check fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. ĐÃ HOÀN THÀNH -->
+        <div class="col-12 col-sm-6 col-xl-2-4" style="flex: 0 0 auto; width: 20%;">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-success">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Đã hoàn thành</span>
+                            <h3 class="mb-0 fw-bold text-success mt-1" th:text="${completedBookings}">0</h3>
+                        </div>
+                        <div class="bg-success-subtle p-3 rounded-circle text-success">
+                            <i class="bi bi-check-circle fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ĐANG THỰC HIỆN / ĐÃ XÁC NHẬN -->
+        <div class="col-12 col-sm-6 col-xl-2-4" style="flex: 0 0 auto; width: 20%;">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-info">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Đang thực hiện</span>
+                            <h3 class="mb-0 fw-bold text-info mt-1" th:text="${inProgressBookings}">0</h3>
+                        </div>
+                        <div class="bg-info-subtle p-3 rounded-circle text-info">
+                            <i class="bi bi-hourglass-split fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. DOANH THU THÁNG NÀY -->
+        <div class="col-12 col-sm-6 col-xl-2-4" style="flex: 0 0 auto; width: 20%;">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-warning">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Doanh Thu Tháng</span>
+                            <h4 class="mb-0 fw-bold text-warning mt-1" 
+                                th:text="${monthRevenue != null ? #numbers.formatDecimal(monthRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">0 VNĐ</h4>
+                        </div>
+                        <div class="bg-warning-subtle p-3 rounded-circle text-warning">
+                            <i class="bi bi-cash-coin fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. ĐÁNH GIÁ TRUNG BÌNH -->
+        <div class="col-12 col-sm-6 col-xl-2-4" style="flex: 0 0 auto; width: 20%;">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-danger">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Đánh giá</span>
+                            <div class="d-flex align-items-center gap-1 mt-1">
+                                <h3 class="mb-0 fw-bold text-danger" th:text="${averageRating != null ? averageRating : '0.0'}">0.0</h3>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="bg-danger-subtle p-3 rounded-circle text-danger">
+                            <i class="bi bi-star-half fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH BẢNG LỊCH ĐẶT MỚI NHẤT -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fw-bold"><i class="bi bi-list-check me-2 text-primary"></i>Danh sách lịch nhận sắp tới</h5>
+            <a th:href="@{/artist/bookings}" class="btn btn-sm btn-outline-primary rounded-pill">Xem tất cả</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Dịch vụ</th>
+                            <th>Thời gian hẹn</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${recentBookings}">
+                            <td class="fw-bold" th:text="'#' + ${booking.id}">#123</td>
+                            <td th:text="${booking.customerName}">Nguyễn Văn A</td>
+                            <td th:text="${booking.serviceName}">Makeup Cô Dâu</td>
+                            <td th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">05/08/2026 09:00</td>
+                            <td class="fw-bold text-success" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500.000 VNĐ</td>
+                            <td>
+                                <span th:if="${booking.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                <span th:if="${booking.status == 'CONFIRMED'}" class="badge bg-info">Đang thực hiện</span>
+                                <span th:if="${booking.status == 'COMPLETED'}" class="badge bg-success">Đã hoàn thành</span>
+                                <span th:if="${booking.status == 'CANCELLED'}" class="badge bg-danger">Đã hủy</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentBookings)}">
+                            <td colspan="6" class="text-center text-muted py-4">Chưa có lịch đặt nào được phân công.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

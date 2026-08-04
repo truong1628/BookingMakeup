@@ -11,8 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "bookings")
 public class Booking {
@@ -22,7 +24,7 @@ public class Booking {
     private Long id;
     
     @Column(length = 20)
-    private String locationType;
+    private String locationType; // "STUDIO" hoặc "HOME"
 
     @NotNull(message = "Vui lòng chọn ngày")
     @FutureOrPresent(message = "Ngày phải từ hôm nay trở đi")
@@ -30,7 +32,8 @@ public class Booking {
 
     @NotNull(message = "Vui lòng chọn giờ")
     private LocalTime bookingTime;
-    private String status;
+    
+    private String status; // "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -46,27 +49,47 @@ public class Booking {
 
     private String cancelReason;
 
-
     @Column(columnDefinition = "NVARCHAR(255)")
     private String address;
-    public Booking() {
-    }
+
     @Column(length = 15)
     private String phone;
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String note;
-    @Column
-    private Double distanceKm;
 
     @Column
-    private Double travelFee;
+    private Double distanceKm = 0.0;
 
     @Column
-    private Double totalPrice;
+    private Double travelFee = 0.0;
 
+    @Column
+    private Double totalPrice = 0.0;
+
+    @Column
+    private Double depositAmount = 0.0;
+
+    @Column(length = 30)
+    private String paymentType; // "PAY_LATER", "DEPOSIT", "FULL"
+
+    @Column(length = 30)
+    private String paymentStatus; // "UNPAID", "PENDING_APPROVAL", "PAID"
+
+    // 🟢 THÊM: Trường tính toán số tiền còn lại cần thu (Không lưu vào Database)
+    @Transient
+    private Double remainingAmount;
+
+    public Booking() {
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getBookingDate() {
@@ -108,6 +131,7 @@ public class Booking {
     public void setService(MakeupService service) {
         this.service = service;
     }
+
     public MakeupArtist getArtist() {
         return artist;
     }
@@ -123,6 +147,7 @@ public class Booking {
     public void setLocationType(String locationType) {
         this.locationType = locationType;
     }
+
     public String getAddress() {
         return address;
     }
@@ -130,8 +155,15 @@ public class Booking {
     public void setAddress(String address) {
         this.address = address;
     }
-    public String getCancelReason() { return cancelReason; }
-    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -172,5 +204,36 @@ public class Booking {
         this.totalPrice = totalPrice;
     }
 
-   
+    public Double getDepositAmount() {
+        return depositAmount;
+    }
+
+    public void setDepositAmount(Double depositAmount) {
+        this.depositAmount = depositAmount;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    // 🟢 THÊM: Getter và Setter cho remainingAmount
+    public Double getRemainingAmount() {
+        return remainingAmount;
+    }
+
+    public void setRemainingAmount(Double remainingAmount) {
+        this.remainingAmount = remainingAmount;
+    }
 }

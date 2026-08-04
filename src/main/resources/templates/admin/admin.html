@@ -13,75 +13,16 @@
     <link rel="stylesheet" th:href="@{/css/admin-style.css}">
 </head>
 <body>
+<div th:replace="~{fragments/admin-navbar :: adminNavbar('dashboard')}"></div>
 
-<!-- TOP NAVBAR HỆ THỐNG (MENU NGANG) -->
-<nav class="navbar navbar-expand-lg navbar-dark admin-navbar sticky-top">
-    <div class="container-fluid px-4">
-        <!-- Thương hiệu / Logo -->
-        <a class="navbar-brand me-4" th:href="@{/admin}">
-            DUNG DORYS ADMIN
-        </a>
-
-        <!-- Nút Toggle cho màn hình nhỏ (Mobile) -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarContent" 
-                aria-controls="adminNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Các mục Menu Ngang -->
-        <div class="collapse navbar-collapse" id="adminNavbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-                <!-- 🟢 1. TRANG CHỦ / THỐNG KÊ -->
-                <li class="nav-item">
-                    <a th:href="@{/admin}" class="nav-link active">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Trang chủ & Thống kê</span>
-                    </a>
-                </li>
-
-                <!-- 2. QUẢN LÝ BOOKING -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/bookings}" class="nav-link">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Quản lý Đặt lịch</span>
-                    </a>
-                </li>
-
-                <!-- 3. QUẢN LÝ DỊCH VỤ -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/services}" class="nav-link">
-                        <i class="fas fa-concierge-bell"></i>
-                        <span>Quản lý Dịch vụ</span>
-                    </a>
-                </li>
-
-                <!-- 4. QUẢN LÝ ARTIST -->
-                <li class="nav-item">
-                    <a th:href="@{/admin/artists}" class="nav-link">
-                        <i class="fas fa-user-tie"></i>
-                        <span>Quản lý Artist</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Nút đăng xuất/Quay về Client (Tùy chọn thêm vào bên phải navbar) -->
-            <div class="d-flex align-items-center gap-2">
-                <a th:href="@{/logout}" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="fas fa-sign-out-alt me-1"></i> Đăng xuất
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- NỘI DUNG CHÍNH (MAIN CONTENT) -->
+<!-- MAIN CONTENT -->
 <div class="container-fluid px-4 main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold mb-0">Tổng quan</h3>
         <span class="text-muted fs-7">Chào mừng quay trở lại Trang quản trị</span>
     </div>
 
-    <!-- Thống kê tổng quan -->
+    <!-- HÀNG 1: THỐNG KÊ TỔNG QUAN HỆ THỐNG -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm bg-primary text-white">
@@ -129,7 +70,78 @@
         </div>
     </div>
 
-    <!-- Layout Biểu đồ & Thẻ trạng thái & Doanh thu -->
+    <!-- HÀNG 2: THỐNG KÊ DOANH THU THEO NGÀY, THÁNG, NĂM & TỔNG -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-success">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Doanh thu Hôm nay</span>
+                            <h4 class="mb-0 fw-bold text-success mt-1" 
+                                th:text="${todayRevenue != null ? #numbers.formatDecimal(todayRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">0 VNĐ</h4>
+                        </div>
+                        <div class="bg-success-subtle p-3 rounded-circle text-success">
+                            <i class="bi bi-calendar-day fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-primary">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Doanh thu Tháng này</span>
+                            <h4 class="mb-0 fw-bold text-primary mt-1" 
+                                th:text="${monthRevenue != null ? #numbers.formatDecimal(monthRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">0 VNĐ</h4>
+                        </div>
+                        <div class="bg-primary-subtle p-3 rounded-circle text-primary">
+                            <i class="bi bi-calendar-month fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-info">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Doanh thu Năm nay</span>
+                            <h4 class="mb-0 fw-bold text-info mt-1" 
+                                th:text="${yearRevenue != null ? #numbers.formatDecimal(yearRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">0 VNĐ</h4>
+                        </div>
+                        <div class="bg-info-subtle p-3 rounded-circle text-info">
+                            <i class="bi bi-calendar3 fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm bg-white border-start border-4 border-warning">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase fs-7 fw-semibold">Tổng Doanh Thu</span>
+                            <h4 class="mb-0 fw-bold text-warning mt-1" 
+                                th:text="${totalRevenue != null ? #numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">0 VNĐ</h4>
+                        </div>
+                        <div class="bg-warning-subtle p-3 rounded-circle text-warning">
+                            <i class="bi bi-wallet2 fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HÀNG 3: BIỂU ĐỒ & CHI TIẾT LỊCH ĐẶT / DOANH THU ARTIST -->
     <div class="row g-4 mb-4">
         <!-- Biểu đồ Chart.js -->
         <div class="col-lg-4">
@@ -145,7 +157,6 @@
             </div>
         </div>
 
-        <!-- Chỉ số chi tiết & Doanh thu -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white py-3 border-0">
@@ -195,7 +206,7 @@
                         </div>
                     </div>
 
-                    <!-- Doanh thu Artist -->
+                    <!-- Bảng Doanh thu theo Artist -->
                     <div class="border-top pt-3">
                         <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-cash-stack me-1 text-success"></i> Doanh thu Makeup Artist</h6>
                         <div class="table-responsive" style="max-height: 180px; overflow-y: auto;">

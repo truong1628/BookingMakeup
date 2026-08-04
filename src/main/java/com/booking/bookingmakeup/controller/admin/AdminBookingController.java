@@ -154,4 +154,17 @@ public class AdminBookingController {
         bookingService.rejectCancelBooking(id);
         return "redirect:/admin/bookings";
     }
+
+    // 9. 🟢 ADMIN DUYỆT THANH TOÁN (XÁC NHẬN ĐÃ NHẬN CHUYỂN KHOẢN)
+    @PutMapping("/admin/bookings/{id}/approve-payment")
+    public String approvePayment(@PathVariable Long id, HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+            return "redirect:/login";
+        }
+
+        // Cập nhật trạng thái thanh toán từ PENDING_APPROVAL -> PAID
+        bookingService.updatePaymentStatus(id, "PAID");
+        return "redirect:/admin/bookings";
+    }
 }

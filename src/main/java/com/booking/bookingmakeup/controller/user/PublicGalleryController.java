@@ -17,7 +17,6 @@ public class PublicGalleryController {
     @Autowired
     private GalleryRepository galleryRepository;
 
-    // Hiển thị trang bộ sưu tập công khai + Hỗ trợ tìm kiếm theo từ khóa
     @GetMapping("/gallery")
     public String showPublicGallery(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
         List<Gallery> galleries;
@@ -31,7 +30,6 @@ public class PublicGalleryController {
         model.addAttribute("galleries", galleries);
         model.addAttribute("keyword", keyword);
         
-        // Trỏ đúng file templates/public-gallery.html
         return "public-gallery"; 
     }
 }

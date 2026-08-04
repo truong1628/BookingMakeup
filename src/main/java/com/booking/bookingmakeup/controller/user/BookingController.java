@@ -30,6 +30,7 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/booking")
 public class BookingController {
+
     private final ServiceService serviceService;
     private final BookingService bookingService;
     private final ReviewService reviewService;
@@ -43,14 +44,12 @@ public class BookingController {
         this.reviewService = reviewService;
     }
 
-    // Hiển thị form đặt lịch (ĐÃ BỔ SUNG TRUYỀN loginUser SANG MODEL)
     @GetMapping("/create/{serviceId}")
     public String bookingPage(
             @PathVariable Long serviceId, 
             HttpSession session, 
             Model model) {
         
-        // Lấy thông tin user từ session và truyền sang Model cho Navbar nhận biết
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
 
@@ -73,42 +72,82 @@ public class BookingController {
 
         User loginUser = (User) session.getAttribute("loginUser");
 
-        // Nếu chưa đăng nhập mà nhấn Đặt lịch -> Chuyển về trang login
         if (loginUser == null) {
             return "redirect:/login";
         }
 
         MakeupService service = serviceService.getServiceById(serviceId);
 
-        // Kiểm tra địa chỉ nếu đặt tại nhà
+        // Validation kiểm tra thông tin địa chỉ và SĐT khi đặt tại nhà
         if ("HOME".equals(booking.getLocationType())) {
+            boolean hasError = false;
 
             if (booking.getAddress() == null || booking.getAddress().trim().isEmpty()) {
-                model.addAttribute("loginUser", loginUser); // Truyền lại loginUser khi báo lỗi
-                model.addAttribute("service", service);
-                model.addAttribute("today", LocalDate.now());
-                model.addAttribute("timeSlots", generateTimeSlots());
                 model.addAttribute("addressError", "Vui lòng nhập địa chỉ.");
-                return "user/booking";
+                hasError = true;
             }
 
             if (booking.getPhone() == null || booking.getPhone().trim().isEmpty()) {
-                model.addAttribute("loginUser", loginUser); // Truyền lại loginUser khi báo lỗi
+                model.addAttribute("phoneError", "Vui lòng nhập số điện thoại.");
+                hasError = true;
+            }
+
+            if (hasError) {
+                model.addAttribute("loginUser", loginUser); 
                 model.addAttribute("service", service);
                 model.addAttribute("today", LocalDate.now());
                 model.addAttribute("timeSlots", generateTimeSlots());
-                model.addAttribute("phoneError", "Vui lòng nhập số điện thoại.");
                 return "user/booking";
             }
         }
 
+        // Gán thông tin cơ bản
         booking.setUser(loginUser);
         booking.setService(service);
         booking.setArtist(null);
         booking.setStatus("PENDING");
 
-        bookingService.save(booking);
+        // Tính toán tổng giá tiền (Giá dịch vụ + Phụ phí di chuyển)
+        double travelFee = (booking.getTravelFee() != null) ? booking.getTravelFee() : 0.0;
+        double totalPrice = service.getPrice() + travelFee;
+        booking.setTotalPrice(totalPrice);
 
+        // --- XỬ LÝ PHÂN LOẠI THANH TOÁN ---
+        
+        // Trường hợp 1: Makeup tại Studio -> Không cần cọc, thanh toán sau tại cửa hàng
+        if ("STUDIO".equals(booking.getLocationType())) {
+            booking.setPaymentType("PAY_LATER");
+            booking.setPaymentStatus("UNPAID");
+            booking.setDepositAmount(0.0);
+
+            bookingService.save(booking);
+            return "redirect:/booking/my";
+        } 
+        
+        // Trường hợp 2: Makeup tại nhà -> Bắt buộc chọn Cọc 30% hoặc Thanh toán 100%
+        if ("HOME".equals(booking.getLocationType())) {
+            String payType = booking.getPaymentType();
+            
+            // Nếu người dùng chưa chọn, mặc định chọn cọc 30%
+            if (payType == null || payType.isEmpty()) {
+                payType = "DEPOSIT";
+                booking.setPaymentType(payType);
+            }
+
+            if ("DEPOSIT".equals(payType)) {
+                booking.setDepositAmount(totalPrice * 0.3); // Cọc 30% tổng đơn
+            } else if ("FULL".equals(payType)) {
+                booking.setDepositAmount(totalPrice);       // Thanh toán 100%
+            }
+
+            booking.setPaymentStatus("UNPAID");
+            bookingService.save(booking);
+
+            // Chuyển sang màn hình thanh toán chuyển khoản QR
+            return "redirect:/payment/" + booking.getId();
+        }
+
+        bookingService.save(booking);
         return "redirect:/booking/my";
     }
 

@@ -20,25 +20,17 @@ public class UserServiceController {
     private final ServiceService serviceService;
     private final ReviewService reviewService;
 
-    public UserServiceController(
-            ServiceService serviceService,
-            ReviewService reviewService) {
-
+    public UserServiceController( ServiceService serviceService, ReviewService reviewService) {
         this.serviceService = serviceService;
         this.reviewService = reviewService;
     }
 
-    // ==========================
     // Xem chi tiết dịch vụ
     // GET /service/{id}
-    // ==========================
-    @GetMapping("/{id}")
-    public String detail(
-            @PathVariable Long id,
-            HttpSession session, // 🟢 1. Thêm HttpSession
-            Model model) {
 
-        // 🟢 2. Lấy thông tin user đã đăng nhập từ Session và truyền sang Thymeleaf
+    @GetMapping("/{id}")
+    public String detail( @PathVariable Long id, HttpSession session, Model model) {
+
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
 
@@ -46,31 +38,20 @@ public class UserServiceController {
 
         model.addAttribute("service", service);
 
-        model.addAttribute(
-                "reviews",
-                reviewService.getReviewsByService(service));
+        model.addAttribute("reviews",reviewService.getReviewsByService(service));
 
-        model.addAttribute(
-                "avgRating",
-                reviewService.getAverageRating(service));
+        model.addAttribute("avgRating",reviewService.getAverageRating(service));
 
         return "user/detail";
     }
 
-    // ==========================
     // Danh sách dịch vụ
-    // GET /service
-    // ==========================
     @GetMapping
-    public String services(HttpSession session, Model model) { // 🟢 Thêm HttpSession
+    public String services(HttpSession session, Model model) { 
 
-        // 🟢 Truyền loginUser
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
-
-        model.addAttribute(
-                "services",
-                serviceService.getAllServices());
+        model.addAttribute("services", serviceService.getAllServices());
 
         return "services";
     }

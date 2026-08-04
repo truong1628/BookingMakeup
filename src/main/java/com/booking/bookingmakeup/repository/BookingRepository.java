@@ -51,5 +51,37 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
         ORDER BY 2 DESC
         """)
     List<Object[]> getArtistRevenue();
+
+    // 1. Doanh thu theo Ngày
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'COMPLETED' AND CAST(b.bookingDate AS date) = :date")
+    Double getRevenueByDate(@Param("date") LocalDate date);
+
+    // 2. Doanh thu theo Tháng và Năm
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'COMPLETED' AND MONTH(b.bookingDate) = :month AND YEAR(b.bookingDate) = :year")
+    Double getRevenueByMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+    // 3. Doanh thu theo Năm
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'COMPLETED' AND YEAR(b.bookingDate) = :year")
+    Double getRevenueByYear(@Param("year") int year);
+
+    // 4. Tổng Doanh thu Tích lũy
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.status = 'COMPLETED'")
+    Double getTotalRevenue();
+
+    // 1. Đếm tổng booking của Artist
+        @Query("SELECT COUNT(b) FROM Booking b WHERE b.artist.id = :artistId")
+        Long countTotalByArtist(@Param("artistId") Long artistId);
+
+        // 2. Đếm số đơn đã hoàn thành của Artist
+        @Query("SELECT COUNT(b) FROM Booking b WHERE b.artist.id = :artistId AND b.status = 'COMPLETED'")
+        Long countCompletedByArtist(@Param("artistId") Long artistId);
+
+        // 3. Đếm số đơn đang thực hiện (đã xác nhận)
+        @Query("SELECT COUNT(b) FROM Booking b WHERE b.artist.id = :artistId AND b.status = 'CONFIRMED'")
+        Long countConfirmedByArtist(@Param("artistId") Long artistId);
+
+        // 4. Doanh thu tháng này của Artist
+        @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.artist.id = :artistId AND b.status = 'COMPLETED' AND MONTH(b.bookingDate) = MONTH(CURRENT_DATE) AND YEAR(b.bookingDate) = YEAR(CURRENT_DATE)")
+        Double getMonthRevenueByArtist(@Param("artistId") Long artistId);
     
 }

@@ -21,81 +21,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
-                <i class="fa-solid fa-wand-magic-sparkles text-danger me-2"></i> 
-                <span style="letter-spacing: 1px;">DUNG DORYS</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto ms-lg-4">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">
-                            <i class="fa-solid fa-house me-1"></i> Trang chủ
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">
-                            <i class="fa-solid fa-spray-can-sparkles me-1"></i> Dịch vụ
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/gallery">
-                            <i class="fa-solid fa-images me-1"></i> Bộ Sưu Tập
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#why-us">
-                            <i class="fa-solid fa-circle-info me-1"></i> Về chúng tôi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">
-                            <i class="fa-solid fa-envelope me-1"></i> Liên hệ
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Chưa đăng nhập -->
-                <div th:if="${loginUser == null}" class="d-flex gap-2 mt-3 mt-lg-0">
-                    <a th:href="@{/login}" class="btn btn-outline-light px-4 rounded-pill">
-                        <i class="fa-regular fa-user me-1"></i> Đăng nhập
-                    </a>
-                    <a th:href="@{/register}" class="btn btn-danger px-4 rounded-pill">
-                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
-                    </a>
-                </div>
-
-                <!-- Đã đăng nhập -->
-                <div th:if="${loginUser != null}" class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
-                    <div class="text-white text-end">
-                        <small class="d-block text-white-50" style="font-size: 0.75rem;">Xin chào,</small>
-                        <span class="fw-bold" th:text="${loginUser.fullName}">Khách hàng</span>
-                    </div>
-
-                    <!-- Role USER -->
-                    <a th:if="${loginUser.role == 'USER'}" th:href="@{/booking/my}" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                        <i class="fa-regular fa-calendar-check me-1"></i> Lịch của tôi
-                    </a>
-
-                    <!-- Nút Đăng xuất kích hoạt Modal -->
-                    <button type="button" class="btn btn-sm btn-danger rounded-circle" 
-                            data-bs-toggle="modal" data-bs-target="#logoutModal" 
-                            title="Đăng xuất" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-power-off"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- HERO BANNER -->
+   <div th:replace="~{fragments/user-navbar :: userNavbar('home')}"></div>
  
     <!-- HERO BANNER -->
     <section class="hero-section text-center py-5 bg-dark text-white">
@@ -285,7 +211,7 @@
                 <div class="col-md-6 col-lg-4" th:each="service : ${services}">
                     <div class="card card-service h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                         <div class="img-wrapper position-relative">
-                            <img th:src="${service.image != null ? '/uploads/' + service.image : 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800'}" 
+                            <img th:src="${service.image != null ? '/uploads/' + service.image : ''}" 
                                  class="card-img-top" alt="Ảnh dịch vụ" style="height: 220px; object-fit: cover;">
                             <span class="badge bg-dark position-absolute top-0 end-0 m-3 px-3 py-2 rounded-pill opacity-75">
                                 <i class="fa-regular fa-clock me-1"></i>

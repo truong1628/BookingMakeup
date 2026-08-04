@@ -8,45 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-light">
-
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-uppercase" href="#">
-                <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Artist Portal
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#artistNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="artistNavbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/artist/schedule}">
-                            <i class="fa-regular fa-calendar-check me-1"></i> Lịch làm việc
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/artist/gallery-manage}">
-                            <i class="fa-regular fa-id-card me-1"></i> Tác phẩm của tôi
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="d-flex align-items-center text-white">
-                    <span class="me-3">
-                        <i class="fa-regular fa-user me-1"></i>
-                        <span th:text="${artist != null ? artist.fullName : 'Artist'}">Artist</span>
-                    </span>
-                    <a th:href="@{/logout}" class="btn btn-outline-light btn-sm">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- CONTAINER NỘI DUNG -->
+<div th:replace="~{fragments/artist-navbar :: artistNavbar('gallery')}"></div>
+    <!-- NỘI DUNG CHÍNH -->
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="fw-bold mb-0">
@@ -57,14 +20,13 @@
             </button>
         </div>
 
-        <!-- DANH SÁCH TÁC PHẨM -->
         <div class="row g-4">
             <div class="col-md-4 col-sm-6" th:each="work : ${myWorks}">
                 <div class="card h-100 shadow-sm border-0">
                     <img th:src="@{'/uploads/' + ${work.imageUrl}}" 
-                        class="card-img-top bg-light" 
-                        alt="Work image" 
-                        style="height: 250px; object-fit: contain;">
+                         class="card-img-top bg-light" 
+                         alt="Work image" 
+                         style="height: 250px; object-fit: contain;">
                     <div class="card-body">
                         <h5 class="card-title fw-bold" th:text="${work.title}">Tiêu đề tác phẩm</h5>
                         <p class="card-text text-muted small" th:text="${work.description}">Mô tả tác phẩm...</p>
@@ -79,7 +41,6 @@
                 </div>
             </div>
 
-            <!-- Trường hợp chưa có tác phẩm -->
             <div class="col-12" th:if="${#lists.isEmpty(myWorks)}">
                 <div class="alert alert-secondary text-center py-4 mb-0">
                     Chưa có tác phẩm nào được tải lên. Hãy bấm nút <strong>Thêm tác phẩm mới</strong> ở trên!

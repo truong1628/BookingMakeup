@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.booking.bookingmakeup.entity.Booking;
 import com.booking.bookingmakeup.entity.MakeupService;
@@ -21,4 +22,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     Double getAverageRating(MakeupService service);
     List<Review> findAllByOrderByCreatedAtDesc();
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.booking.artist.id = :artistId")
+    Double getAverageRatingByArtistId(@Param("artistId") Long artistId);
 }

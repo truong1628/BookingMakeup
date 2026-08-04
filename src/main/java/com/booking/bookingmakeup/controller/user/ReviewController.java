@@ -33,7 +33,6 @@ public class ReviewController {
         this.bookingService = bookingService;
     }
 
-    // Hiện form đánh giá
     @GetMapping("/{bookingId}")
     public String createReview(
             @PathVariable Long bookingId,
@@ -52,17 +51,14 @@ public class ReviewController {
             return "redirect:/booking/my";
         }
 
-        // Chỉ chủ booking mới được đánh giá
         if (!booking.getUser().getId().equals(loginUser.getId())) {
             return "redirect:/booking/my";
         }
 
-        // Chỉ booking COMPLETED
         if (!"COMPLETED".equals(booking.getStatus())) {
             return "redirect:/booking/my";
         }
 
-        // Không cho đánh giá lần 2
         if (reviewService.hasReview(booking)) {
             return "redirect:/booking/my";
         }

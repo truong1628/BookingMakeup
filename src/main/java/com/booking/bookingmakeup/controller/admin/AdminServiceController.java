@@ -44,13 +44,9 @@ public class AdminServiceController {
                 && "ADMIN".equals(loginUser.getRole());
     }
 
-    // =============================
     // Danh sách dịch vụ
-    // GET /admin/services
-    // =============================
-   
     @GetMapping
-    public String index(
+    public String services(
             HttpSession session,
             Model model) {
 
@@ -65,10 +61,6 @@ public class AdminServiceController {
         return "admin/services";
     }
 
-    // =============================
-    // Form thêm
-    // GET /admin/services/add
-    // =============================
     @GetMapping("/add")
     public String create(
             HttpSession session,
@@ -85,12 +77,8 @@ public class AdminServiceController {
         return "admin/service-form";
     }
 
-    // =============================
-    // Lưu
-    // POST /admin/services
-    // =============================
     @PostMapping
-    public String store(
+    public String addService(
             HttpSession session,
             @Valid @ModelAttribute("service") MakeupService service,
             BindingResult result,
@@ -137,10 +125,8 @@ public class AdminServiceController {
 
         
     }
-    // =============================
-    // Form sửa
-    // GET /admin/services/{id}/edit
-    // =============================
+   
+
     @GetMapping("/{id}/edit")
     public String edit(
             HttpSession session,
@@ -158,10 +144,7 @@ public class AdminServiceController {
         return "admin/service-form";
     }
 
-    // =============================
-    // Cập nhật
-    // PUT /admin/services/{id}
-    // =============================
+
     @PutMapping("/{id}")
     public String update(
             HttpSession session,
@@ -209,21 +192,15 @@ public class AdminServiceController {
         return "redirect:/admin/services";
     }
 
-    // =============================
-    // Xóa
-    // DELETE /admin/services/{id}
-    // =============================
+
     @DeleteMapping("/{id}")
     public String delete(
             HttpSession session,
             @PathVariable Long id) {
-
         if (!checkAdmin(session)) {
             return "redirect:/login";
         }
-
         serviceService.delete(id);
-
         return "redirect:/admin/services";
     }
 
