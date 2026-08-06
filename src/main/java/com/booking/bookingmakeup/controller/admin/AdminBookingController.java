@@ -2,6 +2,7 @@ package com.booking.bookingmakeup.controller.admin;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,66 +26,75 @@ public class AdminBookingController {
     private final MakeupArtistService artistService;
     private final BookingRepository bookingRepository;
 
-    public AdminBookingController(BookingService bookingService, 
-                                  MakeupArtistService artistService, 
+    public AdminBookingController(BookingService bookingService,
+                                  MakeupArtistService artistService,
                                   BookingRepository bookingRepository) {
         this.bookingService = bookingService;
         this.artistService = artistService;
         this.bookingRepository = bookingRepository;
     }
 
-    // 1. 🟢 HIỂN THỊ TRANG QUẢN LÝ BOOKING (CÓ BỘ LỌC STATUS)
     @GetMapping("/admin/bookings")
     public String showBookingsPage(
             @RequestParam(value = "status", required = false) String status,
-            HttpSession session, 
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "sort", required = false, defaultValue = "idDesc") String sortOption,
+            HttpSession session,
             Model model) {
-        
+
         User loginUser = (User) session.getAttribute("loginUser");
         if (loginUser == null) {
             return "redirect:/login";
         }
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
-        List<Booking> bookings;
+        // 1. Xác định tiêu chí sắp xếp
+        Sort sort = switch (sortOption) {
+            case "dateAsc" -> Sort.by(Sort.Order.asc("bookingDate"), Sort.Order.asc("bookingTime"));
+            case "dateDesc" -> Sort.by(Sort.Order.desc("bookingDate"), Sort.Order.desc("bookingTime"));
+            case "idAsc" -> Sort.by(Sort.Direction.ASC, "id");
+            default -> Sort.by(Sort.Direction.DESC, "id");
+        };
 
-        // Nếu có truyền status và status không rỗng thì lọc, ngược lại lấy tất cả
-        if (status != null && !status.trim().isEmpty()) {
-            bookings = bookingRepository.findByStatus(status);
-        } else {
-            bookings = bookingService.getAllBookings();
-        }
+        List<Booking> bookings = bookingRepository.searchAndFilterBookings(
+                status != null ? status.trim() : "",
+                keyword != null ? keyword.trim() : "",
+                sort
+        );
 
+        // 3. Đưa dữ liệu sang View
         model.addAttribute("bookings", bookings);
-        model.addAttribute("selectedStatus", status); // Gửi biến này về HTML để active nút lọc tương ứng
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("sortOption", sortOption);
 
-        return "admin/bookings"; // Trả về file admin/bookings.html (hoặc /admin/bookings tùy cấu hình ViewResolver)
+        return "admin/bookings";
     }
 
-    // 2. 🟢 CHẤP NHẬN BOOKING
+    // 2. CHẤP NHẬN BOOKING
     @PutMapping("/admin/bookings/{id}/confirm")
     public String confirmBooking(@PathVariable Long id) {
         bookingService.confirmBooking(id);
         return "redirect:/admin/bookings";
     }
 
-    // 3. 🟢 HỦY BOOKING
+    // 3. HỦY BOOKING
     @PutMapping("/admin/bookings/{id}/cancel")
     public String cancelBooking(@PathVariable Long id) {
         bookingService.adminCancelBooking(id);
         return "redirect:/admin/bookings";
     }
 
-    // 4. 🟢 HOÀN THÀNH BOOKING
+    // 4. HOÀN THÀNH BOOKING
     @PutMapping("/admin/bookings/{id}/complete")
     public String completeBooking(@PathVariable Long id) {
-        bookingService.completeBooking(id); 
+        bookingService.completeBooking(id);
         return "redirect:/admin/bookings";
     }
 
-    // 5. 🟢 PHÂN CÔNG ARTIST (GIAO DIỆN)
+    // 5. PHÂN CÔNG ARTIST (GIAO DIỆN)
     @GetMapping("/admin/bookings/{id}/assign")
     public String assignArtistPage(
             @PathVariable Long id,
@@ -95,7 +105,7 @@ public class AdminBookingController {
         if (loginUser == null) {
             return "redirect:/login";
         }
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
@@ -108,11 +118,11 @@ public class AdminBookingController {
         model.addAttribute("artists", artistService.getAvailableArtists(
                 booking.getBookingDate(),
                 booking.getBookingTime()));
-                
+
         return "admin/assign-artist";
     }
 
-    // 6. 🟢 XỬ LÝ PHÂN CÔNG ARTIST
+    // 6. XỬ LÝ PHÂN CÔNG ARTIST
     @PostMapping("/admin/bookings/{id}/assign")
     public String assignArtist(
             @PathVariable Long id,
@@ -123,7 +133,7 @@ public class AdminBookingController {
         if (loginUser == null) {
             return "redirect:/login";
         }
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
@@ -131,11 +141,11 @@ public class AdminBookingController {
         return "redirect:/admin/bookings";
     }
 
-    // 7. 🟢 ADMIN CHẤP NHẬN YÊU CẦU HỦY CỦA ARTIST
+    // 7. ADMIN CHẤP NHẬN YÊU CẦU HỦY CỦA ARTIST
     @PostMapping("/admin/bookings/{id}/approve-cancel")
     public String approveCancel(@PathVariable Long id, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+        if (loginUser == null || !"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/login";
         }
 
@@ -143,11 +153,11 @@ public class AdminBookingController {
         return "redirect:/admin/bookings";
     }
 
-    // 8. 🟢 ADMIN TỪ CHỐI YÊU CẦU HỦY
+    // 8. ADMIN TỪ CHỐI YÊU CẦU HỦY
     @PostMapping("/admin/bookings/{id}/reject-cancel")
     public String rejectCancel(@PathVariable Long id, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+        if (loginUser == null || !"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/login";
         }
 
@@ -155,11 +165,11 @@ public class AdminBookingController {
         return "redirect:/admin/bookings";
     }
 
-    // 9. 🟢 ADMIN DUYỆT THANH TOÁN (XÁC NHẬN ĐÃ NHẬN CHUYỂN KHOẢN)
+    // 9. ADMIN DUYỆT THANH TOÁN (XÁC NHẬN ĐÃ NHẬN CHUYỂN KHOẢN)
     @PutMapping("/admin/bookings/{id}/approve-payment")
     public String approvePayment(@PathVariable Long id, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+        if (loginUser == null || !"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/login";
         }
 

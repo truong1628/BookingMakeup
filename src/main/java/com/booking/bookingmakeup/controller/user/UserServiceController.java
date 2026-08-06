@@ -20,35 +20,29 @@ public class UserServiceController {
     private final ServiceService serviceService;
     private final ReviewService reviewService;
 
-    public UserServiceController( ServiceService serviceService, ReviewService reviewService) {
+    public UserServiceController(ServiceService serviceService, ReviewService reviewService) {
         this.serviceService = serviceService;
         this.reviewService = reviewService;
     }
 
     // Xem chi tiết dịch vụ
     // GET /service/{id}
-
     @GetMapping("/{id}")
-    public String detail( @PathVariable Long id, HttpSession session, Model model) {
-
+    public String detail(@PathVariable Long id, HttpSession session, Model model) {
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
 
         MakeupService service = serviceService.getServiceById(id);
-
         model.addAttribute("service", service);
-
-        model.addAttribute("reviews",reviewService.getReviewsByService(service));
-
-        model.addAttribute("avgRating",reviewService.getAverageRating(service));
+        model.addAttribute("reviews", reviewService.getReviewsByService(service));
+        model.addAttribute("avgRating", reviewService.getAverageRating(service));
 
         return "user/detail";
     }
 
     // Danh sách dịch vụ
     @GetMapping
-    public String services(HttpSession session, Model model) { 
-
+    public String services(HttpSession session, Model model) {
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
         model.addAttribute("services", serviceService.getAllServices());

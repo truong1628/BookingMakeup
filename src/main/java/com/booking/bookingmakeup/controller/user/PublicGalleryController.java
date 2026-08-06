@@ -1,35 +1,46 @@
 package com.booking.bookingmakeup.controller.user;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.booking.bookingmakeup.entity.Gallery;
 import com.booking.bookingmakeup.repository.GalleryRepository;
 
-@Controller
+@RestController
+@RequestMapping("/api/gallery")
 public class PublicGalleryController {
 
-    @Autowired
-    private GalleryRepository galleryRepository;
+    private final GalleryRepository galleryRepository;
 
-    @GetMapping("/gallery")
-    public String showPublicGallery(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<Gallery> galleries;
+    // Sử dụng Constructor Injection thay cho @Autowired field
+    public PublicGalleryController(GalleryRepository galleryRepository) {
+        this.galleryRepository = galleryRepository;
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> showPublicGallery(
+            @RequestParam(value = "keyword", required = false) String keyword) {
         
+        List<Gallery> galleries;
+
         if (keyword != null && !keyword.trim().isEmpty()) {
             galleries = galleryRepository.findByTitleContainingIgnoreCaseOrderByIdDesc(keyword.trim());
         } else {
             galleries = galleryRepository.findAllByOrderByIdDesc();
         }
 
-        model.addAttribute("galleries", galleries);
-        model.addAttribute("keyword", keyword);
-        
-        return "public-gallery"; 
+        Map<String, Object> response = new HashMap<>();
+        response.put("galleries", galleries);
+        response.put("keyword", keyword != null ? keyword.trim() : "");
+        response.put("totalItems", galleries.size());
+
+        return ResponseEntity.ok(response);
     }
 }

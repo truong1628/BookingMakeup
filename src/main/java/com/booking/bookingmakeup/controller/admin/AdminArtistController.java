@@ -37,30 +37,24 @@ public class AdminArtistController {
     }
 
     @GetMapping
-    public String adminArtists(
-            HttpSession session,
-            Model model) {
-
+    public String adminArtists(HttpSession session, Model model) {
         User loginUser = (User) session.getAttribute("loginUser");
 
         if (loginUser == null) {
             return "redirect:/login";
         }
 
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
         model.addAttribute("artists", artistService.getAll());
-
         return "admin/artists";
     }
 
     @GetMapping("/add")
     public String create(Model model) {
-
         model.addAttribute("artist", new MakeupArtist());
-
         return "admin/artist-form";
     }
 
@@ -69,23 +63,18 @@ public class AdminArtistController {
             @Valid @ModelAttribute("artist") MakeupArtist artist,
             BindingResult result,
             Model model,
-            @RequestParam("imageFile") MultipartFile imageFile)
-            throws IOException {
+            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
 
         if (artistService.existsByEmail(artist.getEmail())) {
+            result.rejectValue("email", "", "Email đã tồn tại");
+        }
 
-            result.rejectValue(
-                    "email",
-                    "",
-                    "Email đã tồn tại");
-
+        if (result.hasErrors()) {
+            return "admin/artist-form";
         }
 
         if (!imageFile.isEmpty()) {
-
-            String fileName = System.currentTimeMillis()
-                    + "_" + imageFile.getOriginalFilename();
-
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
             Path uploadPath = Paths.get("uploads/artists");
 
             if (!Files.exists(uploadPath)) {
@@ -95,69 +84,52 @@ public class AdminArtistController {
             Files.copy(
                     imageFile.getInputStream(),
                     uploadPath.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING);
+                    StandardCopyOption.REPLACE_EXISTING
+            );
 
             artist.setImage("artists/" + fileName);
         }
 
         artistService.save(artist);
-
         return "redirect:/admin/artists";
     }
 
     @GetMapping("/{id}/edit")
-    public String editArtist(
-            @PathVariable Long id,
-            HttpSession session,
-            Model model) {
-
+    public String editArtist(@PathVariable Long id, HttpSession session, Model model) {
         User loginUser = (User) session.getAttribute("loginUser");
 
         if (loginUser == null) {
             return "redirect:/login";
         }
 
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
-        model.addAttribute(
-                "artist",
-                artistService.getById(id));
-
+        model.addAttribute("artist", artistService.getById(id));
         return "admin/artist-form";
     }
 
     @PutMapping("/{id}")
-    public String updateArtist(
-            @PathVariable Long id,
-            @ModelAttribute MakeupArtist artist) {
-
+    public String updateArtist(@PathVariable Long id, @ModelAttribute MakeupArtist artist) {
         artist.setId(id);
-
         artistService.save(artist);
-
         return "redirect:/admin/artists";
     }
 
     @DeleteMapping("/{id}")
-    public String deleteArtist(
-            @PathVariable Long id,
-            HttpSession session) {
-
+    public String deleteArtist(@PathVariable Long id, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
 
         if (loginUser == null) {
             return "redirect:/login";
         }
 
-        if (!"ADMIN".equals(loginUser.getRole())) {
+        if (!"ADMIN".equalsIgnoreCase(loginUser.getRole())) {
             return "redirect:/";
         }
 
         artistService.delete(id);
-
         return "redirect:/admin/artists";
     }
-
 }

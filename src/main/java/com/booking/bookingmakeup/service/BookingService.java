@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.booking.bookingmakeup.entity.Booking;
@@ -37,9 +38,7 @@ public class BookingService {
         return bookingRepository.findById(id).orElse(null);
     }
 
-    // --- CÁC HÀM XỬ LÝ THANH TOÁN (MỚI THÊM) ---
-
-    // Cập nhật trạng thái thanh toán (UNPAID -> PENDING_APPROVAL -> PAID)
+ 
     public void updatePaymentStatus(Long bookingId, String paymentStatus) {
         Booking booking = getBookingById(bookingId);
         if (booking != null) {
@@ -48,7 +47,7 @@ public class BookingService {
         }
     }
 
-    // Cập nhật thông tin thanh toán đầy đủ
+
     public void updatePaymentInfo(Long bookingId, String paymentType, Double depositAmount, String paymentStatus) {
         Booking booking = getBookingById(bookingId);
         if (booking != null) {
@@ -60,7 +59,6 @@ public class BookingService {
     }
 
 
-    // User hủy lịch
     public void cancelBooking(Long id, User user) {
 
         Booking booking = getBookingById(id);
@@ -80,7 +78,7 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-    // Admin hủy
+
     public void adminCancelBooking(Long id) {
 
         Booking booking = getBookingById(id);
@@ -119,8 +117,9 @@ public class BookingService {
                 date);
     }
 
+    // 🟢 Cập nhật: Sắp xếp đơn mới nhất lên đầu theo ID
     public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+        return bookingRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     public void confirmBooking(Long id) {
@@ -166,10 +165,11 @@ public class BookingService {
         return bookingRepository.countByStatus("CANCELLED");
     }
 
+    // 🟢 Cập nhật: Đã sửa tên phương thức khớp với BookingRepository (Desc)
     public List<Booking> getBookingsByArtist(Long artistId) {
 
         return bookingRepository
-                .findByArtistIdOrderByBookingDateAscBookingTimeAsc(artistId);
+                .findByArtistIdOrderByBookingDateDescBookingTimeDesc(artistId);
 
     }
 
@@ -238,7 +238,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
         
-        booking.setStatus("CANCEL_REQUESTED"); // Trạng thái Chờ Admin duyệt hủy
+        booking.setStatus("CANCEL_REQUESTED"); 
         booking.setCancelReason(reason);
         bookingRepository.save(booking);
     }
@@ -247,7 +247,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
         
-        booking.setStatus("CANCELLED"); // Chấp nhận cho hủy
+        booking.setStatus("CANCELLED"); 
         bookingRepository.save(booking);
     }
 
@@ -255,13 +255,14 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
         
-        booking.setStatus("CONFIRMED"); // Từ chối hủy -> Quay về trạng thái Đã xác nhận
+        booking.setStatus("CONFIRMED"); 
         bookingRepository.save(booking);
     }
 
     public List<Object[]> getArtistRevenue() {
         return bookingRepository.getArtistRevenue();
     }
+    
     public Double getTodayRevenue() {
         Double revenue = bookingRepository.getRevenueByDate(LocalDate.now());
         return revenue != null ? revenue : 0.0;
@@ -281,5 +282,8 @@ public class BookingService {
     public Double getTotalRevenue() {
         Double revenue = bookingRepository.getTotalRevenue();
         return revenue != null ? revenue : 0.0;
+    }
+    public List<Booking> searchAndFilterBookings(String status, String keyword, Sort sort) {
+        return bookingRepository.searchAndFilterBookings(status, keyword, sort);
     }
 }

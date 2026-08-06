@@ -24,12 +24,12 @@
                     <table class="table table-hover table-striped align-middle mb-0">
                         <thead class="table-dark text-nowrap">
                             <tr>
-                                <th>ID</th>
+                                <!-- 1. ĐÃ ĐƯA NGÀY & GIỜ LÊN ĐẦU (BỎ CỘT ID) -->
+                                <th>Ngày & Giờ</th>
                                 <th>Khách hàng</th>
                                 <th>Dịch vụ</th>
                                 <th>Địa điểm</th>
                                 <th>SĐT & Ghi chú</th>
-                                <th>Ngày & Giờ</th>
                                 <th class="text-end">Cần thu khách</th>
                                 <th class="text-center">Thanh toán</th>
                                 <th class="text-center">Trạng thái</th>
@@ -38,14 +38,22 @@
                         </thead>
                         <tbody>
                             <tr th:each="booking : ${bookings}">
-                                <td th:text="${booking.id}" class="fw-bold"></td>
+                                <!-- 1. NGÀY & GIỜ -->
+                                <td class="text-nowrap">
+                                    <div class="fw-bold text-primary" th:text="${booking.bookingTime}"></div>
+                                    <small class="text-muted" th:text="${booking.bookingDate}"></small>
+                                </td>
+
+                                <!-- 2. KHÁCH HÀNG -->
                                 <td>
                                     <div class="fw-bold" th:text="${booking.user != null ? booking.user.fullName : 'N/A'}"></div>
                                     <small class="text-muted" th:text="${booking.user != null ? booking.user.email : ''}"></small>
                                 </td>
+
+                                <!-- 3. DỊCH VỤ -->
                                 <td th:text="${booking.service != null ? booking.service.serviceName : 'N/A'}"></td>
                                 
-                                <!-- ĐỊA ĐIỂM -->
+                                <!-- 4. ĐỊA ĐIỂM -->
                                 <td>
                                     <span th:if="${booking.locationType == 'STUDIO'}" class="badge bg-info text-dark">
                                         <i class="fa-solid fa-house-chimney me-1"></i>Tại Studio
@@ -59,23 +67,16 @@
                                     </div>
                                 </td>
 
-                                <!-- SĐT & GHI CHÚ -->
+                                <!-- 5. SĐT & GHI CHÚ -->
                                 <td>
                                     <div><i class="fa-solid fa-phone fs-7 text-muted me-1"></i><span th:text="${booking.phone != null ? booking.phone : '-'}"></span></div>
                                     <small th:if="${booking.note != null && !booking.note.isEmpty()}" class="text-muted d-block mt-1">
                                         <i class="fa-regular fa-note-sticky me-1"></i><span th:text="${booking.note}"></span>
                                     </small>
                                 </td>
-
-                                <!-- NGÀY & GIỜ -->
-                                <td class="text-nowrap">
-                                    <div class="fw-bold" th:text="${booking.bookingTime}"></div>
-                                    <small class="text-muted" th:text="${booking.bookingDate}"></small>
-                                </td>
                                 
-                                <!-- 🟢 CỘT MỚI 1: THU BAO NHIÊU (SỐ TIỀN CÒN LẠI CẦN THU) -->
+                                <!-- 6. CẦN THU KHÁCH -->
                                 <td class="text-end fw-bold">
-                                    <!-- Nếu đã thanh toán cọc/toàn bộ -> Chỉ thu phần còn lại (hoặc 0đ) -->
                                     <span class="text-danger fs-6" 
                                           th:text="${booking.remainingAmount != null ? #numbers.formatDecimal(booking.remainingAmount, 0, 'COMMA', 0, 'POINT') + ' đ' : (booking.service != null ? #numbers.formatDecimal(booking.service.price, 0, 'COMMA', 0, 'POINT') + ' đ' : '0 đ')}">
                                     </span>
@@ -85,7 +86,7 @@
                                     </div>
                                 </td>
 
-                                <!-- 🟢 CỘT MỚI 2: TRẠNG THÁI THANH TOÁN -->
+                                <!-- 7. TRẠNG THÁI THANH TOÁN -->
                                 <td class="text-center">
                                     <span th:if="${booking.paymentStatus == 'PAID'}" class="badge bg-success">
                                         <i class="fa-solid fa-check me-1"></i>Đã cọc/TT
@@ -98,7 +99,7 @@
                                     </span>
                                 </td>
 
-                                <!-- TRẠNG THÁI BÀN GIỜ / ĐƠN HÀNG -->
+                                <!-- 8. TRẠNG THÁI BÀN GIỜ / ĐƠN HÀNG -->
                                 <td class="text-center">
                                     <span th:if="${booking.status == 'CONFIRMED'}" class="badge bg-primary">Đã xác nhận</span>
                                     <span th:if="${booking.status == 'IN_PROGRESS'}" class="badge bg-warning text-dark">Đang thực hiện</span>
@@ -107,8 +108,9 @@
                                     <span th:if="${booking.status == 'CANCELLED'}" class="badge bg-secondary">Đã hủy</span>
                                 </td>
 
-                                <!-- THAO TÁC -->
+                                <!-- 9. THAO TÁC -->
                                 <td class="text-center text-nowrap">
+                                    <!-- Nút Bắt đầu -->
                                     <form th:if="${booking.status == 'CONFIRMED'}" th:action="@{/artist/bookings/{id}/start(id=${booking.id})}" method="post" style="display:inline">
                                         <input type="hidden" name="_method" value="put">
                                         <button type="submit" class="btn btn-primary btn-sm me-1">
@@ -116,7 +118,7 @@
                                         </button>
                                     </form>
 
-                                    <!-- 🟢 2. BỔ SUNG: Nút Hoàn thành (khi status = IN_PROGRESS) -->
+                                    <!-- Nút Hoàn thành -->
                                     <form th:if="${booking.status == 'IN_PROGRESS'}" th:action="@{/artist/bookings/{id}/complete(id=${booking.id})}" method="post" style="display:inline">
                                         <input type="hidden" name="_method" value="put">
                                         <button type="submit" class="btn btn-success btn-sm me-1">
@@ -124,7 +126,7 @@
                                         </button>
                                     </form>
 
-                                    <!-- 3. Nút Mở Modal Yêu Cầu Hủy -->
+                                    <!-- Nút Mở Modal Yêu Cầu Hủy -->
                                     <button th:if="${booking.status == 'CONFIRMED' || booking.status == 'IN_PROGRESS'}" 
                                             type="button" 
                                             class="btn btn-outline-danger btn-sm"
@@ -162,13 +164,13 @@
                             </tr>
 
                             <tr th:if="${#lists.isEmpty(bookings)}">
-                                <td colspan="10" class="text-center text-muted py-4">Hiện tại bạn chưa được phân công lịch làm việc nào.</td>
+                                <td colspan="9" class="text-center text-muted py-4">Hiện tại bạn chưa được phân công lịch làm việc nào.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </div>  
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->

@@ -19,14 +19,9 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, HttpSession session) {
+        model.addAttribute("services", serviceService.getAllServices());
+        model.addAttribute("loginUser", session.getAttribute("loginUser"));
 
-        model.addAttribute("services",
-                serviceService.getAllServices());
-                
-        model.addAttribute(
-            "loginUser",
-            session.getAttribute("loginUser"));
         return "index";
     }
-   
 }

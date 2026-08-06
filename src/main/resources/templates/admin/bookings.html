@@ -14,50 +14,77 @@
 </head>
 <body>
 <div th:replace="~{fragments/admin-navbar :: adminNavbar('bookings')}"></div>
-<!-- NỘI DUNG CHÍNH (MAIN CONTENT) -->
+
 <div class="container-fluid px-4 main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold mb-0">Quản lý Đặt lịch (Booking)</h3>
         <span class="text-muted fs-7">Danh sách và trạng thái toàn bộ lịch đặt</span>
     </div>
 
-    <!-- Bộ lọc trạng thái đơn hàng & trạng thái thanh toán -->
+    <!-- Thanh tìm kiếm & Sắp xếp -->
+    <form th:action="@{/admin/bookings}" method="get" class="row g-2 mb-3 align-items-center">
+        <!-- Giữ lại trạng thái lọc (status) khi submit tìm kiếm/sắp xếp -->
+        <input type="hidden" name="status" th:value="${selectedStatus}" />
+
+        <div class="col-md-4 col-8">
+            <select name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="idDesc" th:selected="${sortOption == 'idDesc'}">Sắp xếp: Đơn mới nhất (ID ↓)</option>
+                <option value="idAsc" th:selected="${sortOption == 'idAsc'}">Sắp xếp: Đơn cũ nhất (ID ↑)</option>
+                <option value="dateDesc" th:selected="${sortOption == 'dateDesc'}">Sắp xếp: Ngày hẹn mới nhất</option>
+                <option value="dateAsc" th:selected="${sortOption == 'dateAsc'}">Sắp xếp: Ngày hẹn xa nhất</option>
+            </select>
+        </div>
+        
+        <div class="col-md-5 col-12">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" name="keyword" th:value="${keyword}" 
+                       class="form-control" 
+                       placeholder="Tìm theo tên Khách hàng hoặc Artist...">
+            </div>
+        </div>
+
+        <div class="col-md-3 col-4">
+            <button type="submit" class="btn btn-dark w-100">
+                <i class="bi bi-funnel me-1"></i>Tìm kiếm
+            </button>
+        </div>
+    </form>
+
+    <!-- Bộ lọc trạng thái (giữ lại param keyword và sort khi chuyển tab) -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="btn-group flex-wrap gap-1" role="group">
-            <a th:href="@{/admin/bookings}" 
+            <a th:href="@{/admin/bookings(status='', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == null || selectedStatus == ''} ? 'btn-dark' : 'btn-outline-dark'">
                 Tất cả
             </a>
-            <a th:href="@{/admin/bookings(status='PENDING')}" 
+            <a th:href="@{/admin/bookings(status='PENDING', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'PENDING'} ? 'btn-warning fw-bold text-dark' : 'btn-outline-warning text-dark'">
                 Chờ xác nhận
             </a>
-            <a th:href="@{/admin/bookings(status='CONFIRMED')}" 
+            <a th:href="@{/admin/bookings(status='CONFIRMED', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'CONFIRMED'} ? 'btn-success' : 'btn-outline-success'">
                 Đã xác nhận
             </a>
-            
-            <!-- 🟢 THÊM BỘ LỌC "ĐANG THỰC HIỆN" -->
-            <a th:href="@{/admin/bookings(status='IN_PROGRESS')}" 
+            <a th:href="@{/admin/bookings(status='IN_PROGRESS', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'IN_PROGRESS'} ? 'btn-info text-white fw-bold' : 'btn-outline-info'">
                 Đang thực hiện
             </a>
-
-            <a th:href="@{/admin/bookings(status='CANCEL_REQUESTED')}" 
+            <a th:href="@{/admin/bookings(status='CANCEL_REQUESTED', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'CANCEL_REQUESTED'} ? 'btn-danger' : 'btn-outline-danger'">
                 Yêu cầu hủy
             </a>
-            <a th:href="@{/admin/bookings(status='COMPLETED')}" 
+            <a th:href="@{/admin/bookings(status='COMPLETED', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'COMPLETED'} ? 'btn-primary' : 'btn-outline-primary'">
                 Đã hoàn thành
             </a>
-            <a th:href="@{/admin/bookings(status='CANCELLED')}" 
+            <a th:href="@{/admin/bookings(status='CANCELLED', keyword=${keyword}, sort=${sortOption})}" 
                class="btn btn-sm" 
                th:classappend="${selectedStatus == 'CANCELLED'} ? 'btn-secondary' : 'btn-outline-secondary'">
                 Đã hủy
@@ -70,13 +97,12 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle mb-0">
-                    <thead class="table-dark">
+                    <thead class="table-dark text-nowrap">
                         <tr>
-                            <th class="ps-3">ID</th>
+                            <th class="ps-3">Ngày & Giờ</th>
                             <th>Khách hàng</th>
                             <th>Dịch vụ</th>
                             <th>Makeup Artist</th>
-                            <th>Ngày & Giờ</th>
                             <th>Địa điểm</th>
                             <th>Thông tin</th>
                             <th class="text-center">Thanh toán</th>
@@ -86,21 +112,31 @@
                     </thead>
                     <tbody>
                         <tr th:each="booking : ${bookings}">
-                            <td class="ps-3 fw-semibold" th:text="${booking.id}"></td>
+                            <!-- 1. NGÀY & GIỜ -->
+                            <td class="ps-3 text-nowrap">
+                                <div class="fw-bold text-primary" th:text="${booking.bookingTime}"></div>
+                                <div class="fw-bold text-dark small" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy')}"></div>
+                            </td>
+
+                            <!-- 2. KHÁCH HÀNG -->
                             <td th:text="${booking.user != null ? booking.user.fullName : 'N/A'}"></td>
+
+                            <!-- 3. DỊCH VỤ -->
                             <td th:text="${booking.service != null ? booking.service.serviceName : 'N/A'}"></td>
+
+                            <!-- 4. MAKEUP ARTIST -->
                             <td>
                                 <span th:if="${booking.artist != null}" th:text="${booking.artist.fullName}"></span>
                                 <span th:if="${booking.artist == null}" class="badge bg-warning text-dark">Chưa phân công</span>
                             </td>
-                            <td>
-                                <div class="fw-bold" th:text="${booking.bookingTime}"></div>
-                                <div class="text-muted small" th:text="${booking.bookingDate}"></div>
-                            </td>
+
+                            <!-- 5. ĐỊA ĐIỂM -->
                             <td>
                                 <span th:if="${booking.locationType=='STUDIO'}" class="badge bg-primary">Studio</span>
                                 <span th:if="${booking.locationType=='HOME'}" class="badge bg-warning text-dark">Tại nhà</span>
                             </td>
+
+                            <!-- 6. THÔNG TIN (ĐỊA CHỈ & SĐT) -->
                             <td>
                                 <table class="table table-sm table-borderless mb-0" th:if="${booking.locationType=='HOME'}">
                                     <tr>
@@ -119,9 +155,8 @@
                                 <span th:if="${booking.locationType=='STUDIO'}" class="text-muted">Không có</span>
                             </td>
 
-                            <!-- CỘT TRẠNG THÁI THANH TOÁN & NÚT DUYỆT CHUYỂN KHOẢN -->
+                            <!-- 7. TRẠNG THÁI THANH TOÁN -->
                             <td class="text-center">
-                                <!-- 1. Trường hợp chờ duyệt chuyển khoản -->
                                 <div th:if="${booking.paymentStatus == 'PENDING_APPROVAL'}" class="d-flex flex-column align-items-center gap-1">
                                     <span class="badge bg-warning text-dark px-2 py-1">
                                         <i class="fa-solid fa-spinner fa-spin me-1"></i>Chờ duyệt CK
@@ -134,35 +169,30 @@
                                     </form>
                                 </div>
 
-                                <!-- 2. Trường hợp đã thanh toán / đã duyệt cọc -->
                                 <span th:if="${booking.paymentStatus == 'PAID'}" class="badge bg-success px-2 py-1">
                                     <i class="fa-solid fa-circle-check me-1"></i>Đã thanh toán
                                 </span>
 
-                                <!-- 3. Trường hợp thanh toán sau hoặc chưa chuyển khoản -->
                                 <span th:if="${booking.paymentStatus == 'UNPAID' || booking.paymentStatus == null}" class="badge bg-secondary px-2 py-1">
                                     <span th:text="${booking.paymentType == 'PAY_LATER' ? 'TT tại Studio' : 'Chưa thanh toán'}">Chưa thanh toán</span>
                                 </span>
                             </td>
 
-                            <!-- CỘT TRẠNG THÁI ĐƠN HÀNG -->
+                            <!-- 8. TRẠNG THÁI ĐƠN HÀNG -->
                             <td class="text-center">
                                 <span th:if="${booking.status == 'PENDING'}" class="badge rounded-pill text-bg-warning px-3 py-2">Chờ xác nhận</span>
                                 <span th:if="${booking.status == 'CONFIRMED'}" class="badge rounded-pill text-bg-success px-3 py-2">Đã xác nhận</span>
-                                
-                                <!-- 🟢 THÊM BADGE TRẠNG THÁI "ĐANG THỰC HIỆN" -->
                                 <span th:if="${booking.status == 'IN_PROGRESS'}" class="badge rounded-pill text-bg-info text-white px-3 py-2">
                                     <i class="fa-solid fa-spinner fa-spin me-1"></i>Đang thực hiện
                                 </span>
-
                                 <span th:if="${booking.status == 'CANCEL_REQUESTED'}" class="badge rounded-pill text-bg-danger px-3 py-2">Yêu cầu hủy</span>
                                 <span th:if="${booking.status == 'COMPLETED'}" class="badge rounded-pill text-bg-primary px-3 py-2">Đã hoàn thành</span>
                                 <span th:if="${booking.status == 'CANCELLED'}" class="badge rounded-pill text-bg-secondary px-3 py-2">Đã hủy</span>
                             </td>
 
-                            <!-- CỘT THAO TÁC -->
+                            <!-- 9. THAO TÁC -->
                             <td class="text-end pe-3">
-                                <!-- 1. Trạng thái PENDING -->
+                                <!-- PENDING -->
                                 <div th:if="${booking.status == 'PENDING'}" class="btn-group">
                                     <a th:href="@{/admin/bookings/{id}/assign(id=${booking.id})}" class="btn btn-outline-primary btn-sm">
                                         <span th:if="${booking.artist == null}">Phân công</span>
@@ -178,7 +208,7 @@
                                     </form>
                                 </div>
 
-                                <!-- 2. Trạng thái CONFIRMED -->
+                                <!-- CONFIRMED -->
                                 <div th:if="${booking.status == 'CONFIRMED'}" class="btn-group">
                                     <form th:action="@{/admin/bookings/{id}/complete(id=${booking.id})}" method="post" style="display:inline;">
                                         <input type="hidden" name="_method" value="put">
@@ -190,7 +220,7 @@
                                     </form>
                                 </div>
 
-                                <!-- 🟢 3. BỔ SUNG: Trạng thái IN_PROGRESS (ĐANG THỰC HIỆN) -->
+                                <!-- IN_PROGRESS -->
                                 <div th:if="${booking.status == 'IN_PROGRESS'}" class="btn-group">
                                     <form th:action="@{/admin/bookings/{id}/complete(id=${booking.id})}" method="post" style="display:inline;">
                                         <input type="hidden" name="_method" value="put">
@@ -204,7 +234,7 @@
                                     </form>
                                 </div>
 
-                                <!-- 4. Trạng thái CANCEL_REQUESTED -->
+                                <!-- CANCEL_REQUESTED -->
                                 <div th:if="${booking.status == 'CANCEL_REQUESTED'}" class="text-end">
                                     <span class="badge bg-warning text-dark d-inline-block mb-1">Artist xin hủy</span>
                                     <small class="text-danger d-block mb-1 fs-7" th:text="'Lý do: ' + ${booking.cancelReason}"></small>
@@ -218,13 +248,14 @@
                                     </div>
                                 </div>
 
-                                <!-- 5. Trạng thái kết thúc -->
+                                <!-- KẾT THÚC -->
                                 <span th:if="${booking.status == 'COMPLETED'}" class="text-success fw-bold fs-7"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
                                 <span th:if="${booking.status == 'CANCELLED'}" class="text-muted fw-bold fs-7"><i class="bi bi-x-circle-fill me-1"></i>Đã hủy</span>
                             </td>
                         </tr>
+
                         <tr th:if="${#lists.isEmpty(bookings)}">
-                            <td colspan="10" class="text-center py-4 text-muted">Không có lịch đặt nào được tìm thấy.</td>
+                            <td colspan="9" class="text-center py-4 text-muted">Không có lịch đặt nào được tìm thấy.</td>
                         </tr>
                     </tbody>
                 </table>

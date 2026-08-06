@@ -37,43 +37,46 @@ public class AdminServiceController {
     }
 
     private boolean checkAdmin(HttpSession session) {
-
         User loginUser = (User) session.getAttribute("loginUser");
+        return loginUser != null && "ADMIN".equalsIgnoreCase(loginUser.getRole());
+    }
 
-        return loginUser != null
-                && "ADMIN".equals(loginUser.getRole());
+    // Tách hàm xử lý lưu file ảnh để tránh lặp lại code ở POST và PUT
+    private String saveImage(MultipartFile imageFile) throws IOException {
+        String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads/services");
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Files.copy(
+                imageFile.getInputStream(),
+                uploadPath.resolve(fileName),
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        return "services/" + fileName;
     }
 
     // Danh sách dịch vụ
     @GetMapping
-    public String services(
-            HttpSession session,
-            Model model) {
-
+    public String services(HttpSession session, Model model) {
         if (!checkAdmin(session)) {
             return "redirect:/login";
         }
 
-        model.addAttribute(
-                "services",
-                serviceService.getActiveServices());
-
+        model.addAttribute("services", serviceService.getActiveServices());
         return "admin/services";
     }
 
     @GetMapping("/add")
-    public String create(
-            HttpSession session,
-            Model model) {
-
+    public String create(HttpSession session, Model model) {
         if (!checkAdmin(session)) {
             return "redirect:/login";
         }
 
-        model.addAttribute(
-                "service",
-                new MakeupService());
-
+        model.addAttribute("service", new MakeupService());
         return "admin/service-form";
     }
 
@@ -82,50 +85,25 @@ public class AdminServiceController {
             HttpSession session,
             @Valid @ModelAttribute("service") MakeupService service,
             BindingResult result,
-            @RequestParam("imageFile") MultipartFile imageFile)
-            throws IOException {
+            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
 
         if (!checkAdmin(session)) {
             return "redirect:/login";
         }
 
         if (imageFile.isEmpty()) {
-            result.rejectValue(
-                "image",
-                "",
-                "Ảnh không được để trống");
+            result.rejectValue("image", "", "Ảnh không được để trống");
         }
 
         if (result.hasErrors()) {
             return "admin/service-form";
         }
 
-        if (!imageFile.isEmpty()) {
-
-            String fileName = System.currentTimeMillis()
-                    + "_" + imageFile.getOriginalFilename();
-
-            Path uploadPath = Paths.get("uploads/services");
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Files.copy(
-                    imageFile.getInputStream(),
-                    uploadPath.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            service.setImage("services/" + fileName);
-        }
-
+        service.setImage(saveImage(imageFile));
         serviceService.save(service);
 
         return "redirect:/admin/services";
-
-        
     }
-   
 
     @GetMapping("/{id}/edit")
     public String edit(
@@ -137,13 +115,9 @@ public class AdminServiceController {
             return "redirect:/login";
         }
 
-        model.addAttribute(
-                "service",
-                serviceService.getServiceById(id));
-
+        model.addAttribute("service", serviceService.getServiceById(id));
         return "admin/service-form";
     }
-
 
     @PutMapping("/{id}")
     public String update(
@@ -151,8 +125,7 @@ public class AdminServiceController {
             @PathVariable Long id,
             @Valid @ModelAttribute("service") MakeupService service,
             BindingResult result,
-            @RequestParam("imageFile") MultipartFile imageFile)
-            throws IOException {
+            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
 
         if (!checkAdmin(session)) {
             return "redirect:/login";
@@ -164,44 +137,23 @@ public class AdminServiceController {
 
         service.setId(id);
         if (!imageFile.isEmpty()) {
-
-            String fileName = System.currentTimeMillis()
-                    + "_" + imageFile.getOriginalFilename();
-
-            Path uploadPath = Paths.get("uploads/services");
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Files.copy(
-                    imageFile.getInputStream(),
-                    uploadPath.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            service.setImage("services/" + fileName);
-
+            service.setImage(saveImage(imageFile));
         } else {
-
             MakeupService oldService = serviceService.getServiceById(id);
-
             service.setImage(oldService.getImage());
         }
-        serviceService.save(service);
 
+        serviceService.save(service);
         return "redirect:/admin/services";
     }
 
-
     @DeleteMapping("/{id}")
-    public String delete(
-            HttpSession session,
-            @PathVariable Long id) {
+    public String delete(HttpSession session, @PathVariable Long id) {
         if (!checkAdmin(session)) {
             return "redirect:/login";
         }
+
         serviceService.delete(id);
         return "redirect:/admin/services";
     }
-
 }

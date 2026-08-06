@@ -18,6 +18,7 @@ import com.booking.bookingmakeup.service.ReviewService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/review")
 public class ReviewController {
@@ -28,7 +29,6 @@ public class ReviewController {
     public ReviewController(
             ReviewService reviewService,
             BookingService bookingService) {
-
         this.reviewService = reviewService;
         this.bookingService = bookingService;
     }
@@ -68,6 +68,7 @@ public class ReviewController {
 
         return "user/review-form";
     }
+
     @PostMapping
     public String saveReview(
             @Valid @ModelAttribute("review") Review review,
@@ -89,16 +90,13 @@ public class ReviewController {
         }
 
         if (result.hasErrors()) {
-
             model.addAttribute("booking", booking);
-
             return "user/review-form";
         }
 
         review.setBooking(booking);
         review.setUser(loginUser);
         review.setService(booking.getService());
-
 
         reviewService.save(review);
 
